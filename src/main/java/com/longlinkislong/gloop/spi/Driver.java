@@ -704,45 +704,226 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
 
     /**
      * Binds the texture to the specified sampler unit id.
+     *
      * @param texture the texture object.
      * @param unit the sampler id.
      * @since 16.03.07
      */
     void textureBind(TextureT texture, long unit);
 
+    /**
+     * Deletes a texture. This should also invalidate the texture handle. This
+     * method is allowed to silently ignore when passed an invalid texture.
+     *
+     * @param texture the texture object.
+     * @since 16.03.08
+     */
     void textureDelete(TextureT texture);
 
+    /**
+     * Sets data in the texture. The texture's memory must be allocated prior to
+     * calling this method. 1D textures expect yOffset and zOffset both to be 0
+     * and for height and depth to be 1. 2D textures expect zOffset to be 0 and
+     * depth to be 1.
+     *
+     * @param texture the texture object.
+     * @param level the mipmap level to write data to.
+     * @param xOffset the offset along the x-axis.
+     * @param yOffset the offset along the y-axis. Expected to be 0 if texture
+     * is 1D.
+     * @param zOffset the offset along the z-axis. Expected to be 0 if texture
+     * is 1D or 2D.
+     * @param width the width of the data uploaded.
+     * @param height the height of the data uploaded. Expected to be 1 if
+     * texture is 1D.
+     * @param depth the depth of the data uploaded. Expected to be 1 if texture
+     * is 1D or 2D.
+     * @param format the pixel format.
+     * @param type the pixel packing type.
+     * @param data the data.
+     * @since 16.03.08
+     */
     void textureSetData(TextureT texture, long level, long xOffset, long yOffset, long zOffset, long width, long height, long depth, long format, long type, ByteBuffer data);
 
+    /**
+     * Reads data from a texture. The texture must have its memory allocated
+     * prior to calling this method. Calling this method before data is set may
+     * result in reading garbage data.
+     *
+     * @param texture the texture object.
+     * @param level the mipmap level.
+     * @param format the pixel format.
+     * @param type the pixel pack type.
+     * @param out the ByteBuffer to write the data to.
+     * @since 16.03.08
+     */
     void textureGetData(TextureT texture, long level, long format, long type, ByteBuffer out);
 
+    /**
+     * Invalidates a mipmap level of the texture. This indicates that the mipmap
+     * level may be garbage collected.
+     *
+     * @param texture the texture object.
+     * @param level the mipmap level.
+     * @since 16.03.08
+     */
     void textureInvalidateData(TextureT texture, long level);
 
+    /**
+     * Invalidates a segment of a mipmap level of the texture. This indicates
+     * that part of the mipmap may be garbage collected.
+     *
+     * @param texture the texture object.
+     * @param level the mipmap level.
+     * @param xOffset the offset along the x-axis for the invalidation cube.
+     * @param yOffset the offset along the y-axis for the invalidation cube.
+     * Expected to be 0 for 1D textures.
+     * @param zOffset the offset along the z-axis for the invalidation cube.
+     * Expected to be 0 for 1D or 2D textures.
+     * @param width the width of the invalidation cube.
+     * @param height the height of the invalidation cube. Expected to be 0 for
+     * 1D textures.
+     * @param depth the depth of the invalidation cube. Expected to be 0 for 1D
+     * and 2D textures.
+     * @since 16.03.08
+     */
     void textureInvalidateRange(TextureT texture, long level, long xOffset, long yOffset, long zOffset, long width, long height, long depth);
 
+    /**
+     * Generates mipmaps for the texture object. This method generates all
+     * mipmap levels based on the base mipmap. The texture must be valid for
+     * this method to succeed. Calling this method without setting the base
+     * mipmap will result in undefined behavior.
+     *
+     * @param texture the texture object.
+     * @since 16.03.08
+     */
     void textureGenerateMipmap(TextureT texture);
 
+    /**
+     * Retrieves the maximum size in pixels for any dimension of a texture.
+     *
+     * @return the maximum size along any axis.
+     * @since 16.03.08
+     */
     long textureGetMaxSize();
 
+    /**
+     * Retrieves the maximum number of textures bound for a shader stage.
+     * Usually this will be 16.
+     *
+     * @return the maximum number of textures allowed to be bound.
+     * @since 16.03.08
+     */
     long textureGetMaxBoundTextures();
 
+    /**
+     * Retrieves the size in pixels for texture page width. This method is
+     * intended to be used with sparse textures.
+     *
+     * @param texture the texture object.
+     * @return the size along the x-axis.
+     * @since 16.03.08
+     */
     long textureGetPageWidth(TextureT texture);
 
+    /**
+     * Retrieves the size in pixels for texture page height. This method is
+     * intended to be used with sparse textures.
+     *
+     * @param texture the texture.
+     * @return the size along the y-axis.
+     * @since 16.03.08
+     */
     long textureGetPageHeight(TextureT texture);
 
+    /**
+     * Retrieves the size in pixels for texture page depth. This method is
+     * intended to be used with sparse textures.
+     *
+     * @param texture the texture.
+     * @return the size along the z-axis.
+     * @since 16.03.08
+     */
     long textureGetPageDepth(TextureT texture);
 
+    /**
+     * Retrieves the preferred format type for the corresponding internal
+     * format. For example, some GPUs prefer using BGRA instead of RGBA. This
+     * is, however, usually only a thing on older hardware.
+     *
+     * @param internalFormat the internal pixel format.
+     * @return the preferred pixel format.
+     * @since 16.03.08
+     */
     long textureGetPreferredFormat(long internalFormat);
 
+    /**
+     * Sets a texture parameter.
+     *
+     * @param texture the texture object.
+     * @param param the parameter name.
+     * @param value the parameter value.
+     * @since 16.03.08
+     */
     void textureSetParameter(TextureT texture, long param, long value);
 
+    /**
+     * Sets the texture parameter.
+     *
+     * @param texture the texture object.
+     * @param param the parameter name.
+     * @param value the parameter value.
+     * @since 16.03.08
+     */
     void textureSetParameter(TextureT texture, long param, double value);
 
+    /**
+     * Allocates a segment of a sparse texture. All pages within the specified
+     * allocation cube are allocated. The call is allowed to silently ignore
+     * when the pages are already allocated.
+     *
+     * @param texture the texture object.
+     * @param level the mipmap level.
+     * @param xOffset the offset along the x-axis in pixels.
+     * @param yOffset the offset along the y-axis in pixels.
+     * @param zOffset the offset along the z-axis in pixels.
+     * @param width the width of the allocation cube in pixels.
+     * @param height the height of the allocation cube in pixels. Expected to be
+     * 1 in 1D textures.
+     * @param depth the depth of the allocation cube in pixels. Expected to be 1
+     * in 1D and 2D textures.
+     * @since 16.03.08
+     */
     void textureAllocatePage(TextureT texture, long level, long xOffset, long yOffset, long zOffset, long width, long height, long depth);
 
+    /**
+     * Deallocates a segment of a sparse texture. All pages within the specified
+     * allocation cube are deallocated. The call is allowed to silently ignore
+     * when the pages are already allocated.
+     *
+     * @param texture the texture object.
+     * @param level the mipmap level.
+     * @param xOffset the offset along the x-axis in pixels.
+     * @param yOffset the offset along the y-axis in pixels. Expected to be 0 in
+     * 1D textures.
+     * @param zOffset the offset along the z-axis in pixels. Expected to be 0 in
+     * 1D and 2D textures.
+     * @param width the width of the deallocation cube in pixels.
+     * @param height the height of the deallocation cube in pixels. Expected to
+     * be 1 in 1D textures.
+     * @param depth the depth of the deallocation cube in pixels. Expected to be
+     * 1 in 1D and 2D textures.
+     */
     void textureDeallocatePage(TextureT texture, long level, long xOffset, long yOffset, long zOffset, long width, long height, long depth);
 
-    long textureGetMaxAnisotropy();
+    /**
+     * Retrieves the maximum level of anisotropic filtering supported for
+     * textures.
+     *
+     * @return the maximum level of anisotropic filtering.
+     */
+    double textureGetMaxAnisotropy();
 
     // vertexArray
     VertexArrayT vertexArrayCreate();
