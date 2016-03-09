@@ -31,8 +31,10 @@ import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
 /**
- *
+ * A Service Provider Interface that supplies driver implementations.
+ * 
  * @author zmichaels
+ * @since 16.03.08
  */
 public interface DriverProvider {
 
