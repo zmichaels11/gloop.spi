@@ -169,7 +169,7 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      * @return the result of the buffer parameter.
      * @since 16.03.07
      */
-    long bufferGetParameter(BufferT buffer, int paramId);
+    int bufferGetParameteri(BufferT buffer, int paramId);
 
     /**
      * Invalidates the entire chunk of memory held by the buffer object.
@@ -236,7 +236,7 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      * @param depth the clear depth.
      * @since 16.03.07
      */
-    void clear(int bitfield, float red, float green, float blue, float alpha, float depth);
+    void clear(int bitfield, float red, float green, float blue, float alpha, double depth);
 
     /**
      * Disables depth testing.
@@ -610,7 +610,7 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      * @return the index location.
      * @since 16.03.07
      */
-    long programGetUniformLocation(ProgramT program, String name);
+    int programGetUniformLocation(ProgramT program, String name);
 
     /**
      * Links the shaders for the program. The program should be valid after this
@@ -962,7 +962,7 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      *
      * @return the maximum level of anisotropic filtering.
      */
-    double textureGetMaxAnisotropy();
+    float textureGetMaxAnisotropy();
 
     /**
      * Retrieves the maximum number of textures bound for a shader stage.
@@ -971,7 +971,7 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      * @return the maximum number of textures allowed to be bound.
      * @since 16.03.08
      */
-    long textureGetMaxBoundTextures();
+    int textureGetMaxBoundTextures();
 
     /**
      * Retrieves the maximum size in pixels for any dimension of a texture.
@@ -979,7 +979,7 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      * @return the maximum size along any axis.
      * @since 16.03.08
      */
-    long textureGetMaxSize();
+    int textureGetMaxSize();
 
     /**
      * Retrieves the size in pixels for texture page depth. This method is
@@ -989,7 +989,7 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      * @return the size along the z-axis.
      * @since 16.03.08
      */
-    long textureGetPageDepth(TextureT texture);
+    int textureGetPageDepth(TextureT texture);
 
     /**
      * Retrieves the size in pixels for texture page height. This method is
@@ -999,7 +999,7 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      * @return the size along the y-axis.
      * @since 16.03.08
      */
-    long textureGetPageHeight(TextureT texture);
+    int textureGetPageHeight(TextureT texture);
 
     /**
      * Retrieves the size in pixels for texture page width. This method is
@@ -1009,7 +1009,7 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      * @return the size along the x-axis.
      * @since 16.03.08
      */
-    long textureGetPageWidth(TextureT texture);
+    int textureGetPageWidth(TextureT texture);
 
     /**
      * Retrieves the preferred format type for the corresponding internal
