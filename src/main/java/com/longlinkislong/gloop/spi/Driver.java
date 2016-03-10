@@ -842,7 +842,7 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      * @return the shader parameter value.
      * @since 16.03.07
      */
-    int shaderGetParameter(ShaderT shader, int pName);
+    int shaderGetParameteri(ShaderT shader, int pName);
 
     /**
      * Allocates a new immutable texture object with backing memory. The texture
