@@ -9,6 +9,9 @@ package com.longlinkislong.gloop.spi;
  *
  * @author zmichaels
  */
-public interface CommandBuffer {
-    boolean isValid();
+public interface ContextDriverProvider {
+
+    ContextDriver getContextDriver();
+
+    String getContextName();
 }

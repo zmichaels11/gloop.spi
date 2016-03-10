@@ -25,7 +25,10 @@
  */
 package com.longlinkislong.gloop.spi;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.Set;
@@ -36,14 +39,14 @@ import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
 /**
- * A Factory object that supplies driver instances as requested.
+ * A Manager object that supplies driver instances as requested.
  *
  * @author zmichaels
  * @since 16.03.08
  */
-public final class DriverFactory {
+public final class DriverManager {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DriverFactory.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DriverManager.class);
     private static final Marker MARKER = MarkerFactory.getMarker("gloop-spi");
 
     private final ServiceLoader<DriverProvider> driverLoader;
@@ -117,7 +120,7 @@ public final class DriverFactory {
      * no drivers match.
      * @since 16.03.08
      */
-    public Optional<Driver> selectDriver(final String driverName) {
+    public Optional<Driver> selectDriverByName(final String driverName) {
         for (DriverProvider testDriver : driverLoader) {
             if (testDriver.getDriverName().equalsIgnoreCase(driverName)) {
                 if (testDriver.isSupported()) {
@@ -134,19 +137,56 @@ public final class DriverFactory {
     }
 
     /**
+     * Selects the driver that best matches the description.
+     *
+     * @param descriptions the list of Strings that are expected to match.
+     * @return the driver wrapped in an Optional. The Optional may be empty if
+     * no drivers match.
+     * @since 16.03.10
+     */
+    public Optional<Driver> selectDriverByDescription(final String... descriptions) {
+        final List<DriverProvider> matches = new ArrayList<>();
+        final Set<String> mustMatch = Arrays.stream(descriptions)
+                .collect(Collectors.toCollection(HashSet::new));
+
+        for (DriverProvider testDriver : driverLoader) {
+            if (testDriver.isSupported()) {
+                if (mustMatch.containsAll(testDriver.getDriverDescription())) {
+                    matches.add(testDriver);
+                }
+            }
+        }
+
+        DriverProvider bestDriver = null;
+        for (DriverProvider testDriver : matches) {
+            if (bestDriver == null || testDriver.getSupportRating() > bestDriver.getSupportRating()) {
+                bestDriver = testDriver;
+            }
+        }
+
+        if (bestDriver != null) {
+            return Optional.of(bestDriver.getDriverInstance());
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    /**
      * Constructs a new DriverFactory using the default system class loader.
+     *
      * @since 16.03.08
      */
-    public DriverFactory() {
+    public DriverManager() {
         this.driverLoader = ServiceLoader.load(DriverProvider.class);
     }
 
     /**
      * Constructs a new DriverFactory using the specified ClassLoader.
+     *
      * @param loader the ClassLoader to use.
      * @since 16.03.08
      */
-    public DriverFactory(final ClassLoader loader) {
+    public DriverManager(final ClassLoader loader) {
         this.driverLoader = ServiceLoader.load(DriverProvider.class, loader);
     }
 }

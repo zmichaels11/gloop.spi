@@ -15,7 +15,7 @@ package com.longlinkislong.gloop.spi;
  */
 public interface ContextDriver<
         WindowT extends Window, CursorT extends Cursor,
-        CommandQueueT extends CommandQueue, CommandBufferT extends CommandBuffer> {
+        CommandQueueT extends CommandQueue, CommandBufferT extends Command> {
 
     WindowT windowOpen(String title, int width, int height);
 

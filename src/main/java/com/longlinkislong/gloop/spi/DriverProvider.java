@@ -25,6 +25,7 @@
  */
 package com.longlinkislong.gloop.spi;
 
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
@@ -32,49 +33,169 @@ import org.slf4j.MarkerFactory;
 
 /**
  * A Service Provider Interface that supplies driver implementations.
- * 
+ *
  * @author zmichaels
  * @since 16.03.08
  */
 public interface DriverProvider {
 
+    /**
+     * Retrieves the instance of the driver. This may initialize the driver and
+     * lock the system to using that driver.
+     *
+     * @return the driver.
+     * @since 16.03.10
+     */
     @SuppressWarnings("rawtypes")
     Driver getDriverInstance();
 
+    /**
+     * Retrieves the driver's name. The default implementation is to return the
+     * simple class name.
+     *
+     * @return the driver's name.
+     * @since 16.03.10
+     */
     default String getDriverName() {
-        return getDriverInstance().getClass().getName();
+        return getDriverInstance().getClass().getSimpleName();
     }
 
+    /**
+     * Returns a list of Strings that describe the driver. These strings can be
+     * used to select drivers by the DriverFactory.
+     *
+     * @return the list of driver descriptors.
+     * @since 16.03.10
+     */
+    List<String> getDriverDescription();
+
+    /**
+     * Checks if the driver is supported by the current context.
+     *
+     * @return true if the driver may be used.
+     * @since 16.03.10
+     */
     boolean isSupported();
 
+    /**
+     * Checks if buffer objects are supported.
+     *
+     * @return true if buffer objects are supported.
+     * @since 16.03.10
+     */
     boolean isBufferObjectSupported();
 
+    /**
+     * Checks if immutable buffer objects are supported.
+     *
+     * @return true if immutable buffer objects are supported.
+     * @since 16.03.10
+     */
     boolean isImmutableBufferStorageSupported();
 
+    /**
+     * Checks if draw query objects are supported.
+     *
+     * @return true if draw query objects are supported.
+     * @since 16.03.10
+     */
     boolean isDrawQuerySupported();
 
+    /**
+     * Checks if framebuffer objects are supported.
+     *
+     * @return true if framebuffer objects are supported.
+     * @since 16.03.10
+     */
     boolean isFramebufferObjectSupported();
 
+    /**
+     * Checks if program objects are supported.
+     *
+     * @return true if program objects are supported.
+     * @since 16.03.10
+     */
     boolean isProgramSupported();
 
+    /**
+     * Checks if sampler objects are supported.
+     *
+     * @return true if sampler objects are supported.
+     * @since 16.03.10
+     */
     boolean isSamplerSupported();
 
+    /**
+     * Checks if compute shaders are supported.
+     *
+     * @return true if compute shaders are supported.
+     * @since 16.03.10
+     */
     boolean isComputeShaderSupported();
 
+    /**
+     * Checks if sparse textures are supported.
+     *
+     * @return true if sparse textures are supported.
+     * @since 16.03.10
+     */
     boolean isSparseTextureSupported();
 
+    /**
+     * Checks if draw indirect is supported.
+     *
+     * @return true if draw indirect is supported.
+     * @since 16.03.10
+     */
     boolean isDrawIndirectSupported();
 
+    /**
+     * Checks if drawI instanced is supported.
+     *
+     * @return true if drawInstanced is supported.
+     * @since 16.03.10
+     */
     boolean isDrawInstancedSupported();
 
+    /**
+     * Checks if invalidation of subdata is supported.
+     *
+     * @return true if buffers and textures may invalidate data.
+     * @since 16.03.10
+     */
     boolean isInvalidateSubdataSupported();
 
+    /**
+     * Checks if separate shader objects is supported.
+     *
+     * @return true if separate shader objects are supported.
+     * @since 16.03.10
+     */
     boolean isSeparateShaderObjectsSupported();
 
+    /**
+     * Checks if 64bit uniforms are supported.
+     *
+     * @return true if 64bit uniforms are supported.
+     * @since 16.03.10
+     */
     boolean is64bitUniformsSupported();
 
+    /**
+     * Checks if native vertex array objects are supported.
+     *
+     * @return true if native vertex array objects are supported.
+     * @since 16.03.10
+     */
     boolean isVertexArrayObjectSupported();
 
+    /**
+     * Calculates the support rating. This is a number between 0.0 and 1.0 that
+     * reflects how well the driver is supported by the current context.
+     *
+     * @return the support rating.
+     * @since 16.03.10
+     */
     default double getSupportRating() {
         double rating = 0.0;
         rating += isBufferObjectSupported() ? 1.0 : 0.0;
@@ -95,29 +216,41 @@ public interface DriverProvider {
         return rating / 14.0;
     }
 
+    /**
+     * Retrieves the logger associated with the DriverProvider.
+     *
+     * @return the logger.
+     * @since 16.03.10
+     */
     default Logger getLogger() {
         return LoggerFactory.getLogger(this.getClass());
     }
 
+    /**
+     * Logs the driver capabilities. All feature support is logged to debug. The
+     * name and rating are logged to info.
+     *
+     * @since 16.03.10
+     */
     default void logCapabilities() {
         final Logger logger = this.getLogger();
         final Marker marker = MarkerFactory.getMarker("gloop-spi");
 
         logger.info(marker, "Driver Capabilities [{}]", this.getClass().getSimpleName());
         logger.info(marker, "Driver supported:\t\t{}", this.isSupported());
-        logger.info(marker, "64bit uniform:\t\t{}", this.is64bitUniformsSupported());
-        logger.info(marker, "Buffer object:\t\t{}", this.isBufferObjectSupported());
-        logger.info(marker, "Compute shader:\t\t{}", this.isComputeShaderSupported());
-        logger.info(marker, "Draw indirect:\t\t{}", this.isDrawIndirectSupported());
-        logger.info(marker, "Draw instanced:\t\t{}", this.isDrawInstancedSupported());
-        logger.info(marker, "Framebuffer object:\t{}", this.isFramebufferObjectSupported());
-        logger.info(marker, "Immutable buffer storage:\t{}", this.isImmutableBufferStorageSupported());
-        logger.info(marker, "Invalidate subdata:\t{}", this.isInvalidateSubdataSupported());
-        logger.info(marker, "Shader program:\t\t{}", this.isProgramSupported());
-        logger.info(marker, "Sampler object:\t\t{}", this.isSamplerSupported());
-        logger.info(marker, "Separate shader objects:\t{}", this.isSeparateShaderObjectsSupported());
-        logger.info(marker, "Sparse texture:\t\t{}", this.isSparseTextureSupported());
-        logger.info(marker, "Vertex array object:\t{}", this.isVertexArrayObjectSupported());
+        logger.debug(marker, "64bit uniform:\t\t{}", this.is64bitUniformsSupported());
+        logger.debug(marker, "Buffer object:\t\t{}", this.isBufferObjectSupported());
+        logger.debug(marker, "Compute shader:\t\t{}", this.isComputeShaderSupported());
+        logger.debug(marker, "Draw indirect:\t\t{}", this.isDrawIndirectSupported());
+        logger.debug(marker, "Draw instanced:\t\t{}", this.isDrawInstancedSupported());
+        logger.debug(marker, "Framebuffer object:\t{}", this.isFramebufferObjectSupported());
+        logger.debug(marker, "Immutable buffer storage:\t{}", this.isImmutableBufferStorageSupported());
+        logger.debug(marker, "Invalidate subdata:\t{}", this.isInvalidateSubdataSupported());
+        logger.debug(marker, "Shader program:\t\t{}", this.isProgramSupported());
+        logger.debug(marker, "Sampler object:\t\t{}", this.isSamplerSupported());
+        logger.debug(marker, "Separate shader objects:\t{}", this.isSeparateShaderObjectsSupported());
+        logger.debug(marker, "Sparse texture:\t\t{}", this.isSparseTextureSupported());
+        logger.debug(marker, "Vertex array object:\t{}", this.isVertexArrayObjectSupported());
         logger.info(marker, "Support rating:\t\t{}", this.getSupportRating());
 
     }
