@@ -145,13 +145,16 @@ public final class DriverManager {
      * @since 16.03.10
      */
     public Optional<Driver> selectDriverByDescription(final String... descriptions) {
-        final List<DriverProvider> matches = new ArrayList<>();
-        final Set<String> mustMatch = Arrays.stream(descriptions)
-                .collect(Collectors.toCollection(HashSet::new));
+        final List<DriverProvider> matches = new ArrayList<>();        
+        final List<String> descList = Arrays.asList(descriptions);
 
         for (DriverProvider testDriver : driverLoader) {
+            final Set<String> mustMatch = new HashSet<>();
+            
+            mustMatch.addAll(testDriver.getDriverDescription());
+            
             if (testDriver.isSupported()) {
-                if (mustMatch.containsAll(testDriver.getDriverDescription())) {
+                if (mustMatch.containsAll(descList)) {
                     matches.add(testDriver);
                 }
             }
