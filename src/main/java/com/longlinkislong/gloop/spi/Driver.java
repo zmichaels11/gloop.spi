@@ -60,6 +60,13 @@ import static org.lwjgl.opengl.GL33.*;
 public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer, TextureT extends Texture, ShaderT extends Shader, ProgramT extends Program, SamplerT extends Sampler, VertexArrayT extends VertexArray, QueryT extends DrawQuery> {
 
     /**
+     * Disables blending.
+     *
+     * @since 16.03.07
+     */
+    void blendingDisable();
+
+    /**
      * Enables the specified blending mode. This call is roughly equivalent to:
      * enabling blending, setting blend equations separate, setting blend
      * functions separate.
@@ -73,59 +80,19 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      * destination.
      * @since 16.03.07
      */
-    void blendingEnable(long rgbEq, long aEq, long rgbFuncSrc, long rgbFuncDst, long aFuncSrc, long aFuncDst);
+    void blendingEnable(int rgbEq, int aEq, int rgbFuncSrc, int rgbFuncDst, int aFuncSrc, int aFuncDst);
 
     /**
-     * Disables blending.
-     *
-     * @since 16.03.07
-     */
-    void blendingDisable();
-
-    /**
-     * Creates a new Buffer Object. This is not required to allocate a buffer
-     * handle nor buffer resources. Rather, it is required only to allocate the
-     * buffer handle container. Calls to bufferAllocate,
-     * bufferAllocateImmutable, or bufferSetData should be called after
-     * bufferCreate.
-     *
-     * @return the buffer object.
-     * @since 16.03.07
-     */
-    BufferT bufferCreate();
-
-    /**
-     * Retrieves an integer-like value from the buffer object.
+     * Allocates the buffer memory. This should allocate or reallocate the
+     * buffer memory. The buffer should be considered valid after this call.
      *
      * @param buffer the buffer object.
-     * @param paramId the parameter name (OpenGL buffer parameter name)
-     * @return the result of the buffer parameter.
-     * @since 16.03.07
-     */
-    long bufferGetParameter(BufferT buffer, long paramId);
-
-    /**
-     * Deletes a buffer object. This should also invalidate the buffer handle.
-     * This method is allowed to silently ignore calls when passed an invalid
-     * buffer.
-     *
-     * @param buffer the buffer object.
-     * @since 16.03.07
-     */
-    void bufferDelete(BufferT buffer);
-
-    /**
-     * Sets the data held by the buffer. This method is allowed to (re)allocate
-     * the backing buffer memory. The buffer should be considered valid after
-     * this call.
-     *
-     * @param buffer the buffer object.
-     * @param data the data to upload
+     * @param size the buffer size in bytes.
      * @param usage the usage hints (OpenGL bitfield). The implementation is not
-     * required to follow the hints.
+     * required to follow the usage hints.
      * @since 16.03.07
      */
-    void bufferSetData(BufferT buffer, ByteBuffer data, long usage);
+    void bufferAllocate(BufferT buffer, long size, int usage);
 
     /**
      * Allocates the buffer memory as an immutable object. This should allocate
@@ -140,19 +107,43 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      * bitflags.
      * @since 16.03.07
      */
-    void bufferAllocateImmutable(BufferT buffer, long size, long bitflags);
+    void bufferAllocateImmutable(BufferT buffer, long size, int bitflags);
 
     /**
-     * Allocates the buffer memory. This should allocate or reallocate the
-     * buffer memory. The buffer should be considered valid after this call.
+     * Copies data from one Buffer object to another Buffer object.
      *
-     * @param buffer the buffer object.
-     * @param size the buffer size in bytes.
-     * @param usage the usage hints (OpenGL bitfield). The implementation is not
-     * required to follow the usage hints.
+     * @param srcBuffer the source buffer object.
+     * @param srcOffset the offset (in bytes) for reading from the source buffer
+     * object.
+     * @param dstBuffer the destination buffer object.
+     * @param dstOffset the offset (in bytes) for writing to the destination
+     * buffer object.
+     * @param size the number of bytes to copy.
      * @since 16.03.07
      */
-    void bufferAllocate(BufferT buffer, long size, long usage);
+    void bufferCopyData(BufferT srcBuffer, long srcOffset, BufferT dstBuffer, long dstOffset, long size);
+
+    /**
+     * Creates a new Buffer Object. This is not required to allocate a buffer
+     * handle nor buffer resources. Rather, it is required only to allocate the
+     * buffer handle container. Calls to bufferAllocate,
+     * bufferAllocateImmutable, or bufferSetData should be called after
+     * bufferCreate.
+     *
+     * @return the buffer object.
+     * @since 16.03.07
+     */
+    BufferT bufferCreate();
+
+    /**
+     * Deletes a buffer object. This should also invalidate the buffer handle.
+     * This method is allowed to silently ignore calls when passed an invalid
+     * buffer.
+     *
+     * @param buffer the buffer object.
+     * @since 16.03.07
+     */
+    void bufferDelete(BufferT buffer);
 
     /**
      * Retrieves a chunk of data from the buffer. The buffer must be valid and
@@ -171,40 +162,22 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
     void bufferGetData(BufferT buffer, long offset, ByteBuffer out);
 
     /**
-     * Maps the buffer object into local memory. It is recommended, but not
-     * required, for the Buffer object to cache the ByteBuffer object.
+     * Retrieves an integer-like value from the buffer object.
      *
      * @param buffer the buffer object.
-     * @param offset the offset to begin the map (in bytes)
-     * @param length the number of bytes to map
-     * @param accessFlags map access flags (OpenGL bitfield). The implementation
-     * is not required to follow the access flags.
-     * @return a ByteBuffer that contains a pointer to the mapped data.
+     * @param paramId the parameter name (OpenGL buffer parameter name)
+     * @return the result of the buffer parameter.
      * @since 16.03.07
      */
-    ByteBuffer bufferMapData(BufferT buffer, long offset, long length, long accessFlags);
+    long bufferGetParameter(BufferT buffer, int paramId);
 
     /**
-     * Unmaps the buffer.
+     * Invalidates the entire chunk of memory held by the buffer object.
      *
      * @param buffer the buffer object.
      * @since 16.03.07
      */
-    void bufferUnmapData(BufferT buffer);
-
-    /**
-     * Copies data from one Buffer object to another Buffer object.
-     *
-     * @param srcBuffer the source buffer object.
-     * @param srcOffset the offset (in bytes) for reading from the source buffer
-     * object.
-     * @param dstBuffer the destination buffer object.
-     * @param dstOffset the offset (in bytes) for writing to the destination
-     * buffer object.
-     * @param size the number of bytes to copy.
-     * @since 16.03.07
-     */
-    void bufferCopyData(BufferT srcBuffer, long srcOffset, BufferT dstBuffer, long dstOffset, long size);
+    void bufferInvalidateData(BufferT buffer);
 
     /**
      * Invalidates a range of memory for the buffer. This marks the range of
@@ -218,12 +191,39 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
     void bufferInvalidateRange(BufferT buffer, long offset, long length);
 
     /**
-     * Invalidates the entire chunk of memory held by the buffer object.
+     * Maps the buffer object into local memory. It is recommended, but not
+     * required, for the Buffer object to cache the ByteBuffer object.
+     *
+     * @param buffer the buffer object.
+     * @param offset the offset to begin the map (in bytes)
+     * @param length the number of bytes to map
+     * @param accessFlags map access flags (OpenGL bitfield). The implementation
+     * is not required to follow the access flags.
+     * @return a ByteBuffer that contains a pointer to the mapped data.
+     * @since 16.03.07
+     */
+    ByteBuffer bufferMapData(BufferT buffer, long offset, long length, int accessFlags);
+
+    /**
+     * Sets the data held by the buffer. This method is allowed to (re)allocate
+     * the backing buffer memory. The buffer should be considered valid after
+     * this call.
+     *
+     * @param buffer the buffer object.
+     * @param data the data to upload
+     * @param usage the usage hints (OpenGL bitfield). The implementation is not
+     * required to follow the hints.
+     * @since 16.03.07
+     */
+    void bufferSetData(BufferT buffer, ByteBuffer data, int usage);
+
+    /**
+     * Unmaps the buffer.
      *
      * @param buffer the buffer object.
      * @since 16.03.07
      */
-    void bufferInvalidateData(BufferT buffer);
+    void bufferUnmapData(BufferT buffer);
 
     /**
      * Clears the current framebuffer.
@@ -236,16 +236,7 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      * @param depth the clear depth.
      * @since 16.03.07
      */
-    void clear(long bitfield, double red, double green, double blue, double alpha, double depth);
-
-    /**
-     * Enables depth testing.
-     *
-     * @param depthTest the type of depth testing to perform (Uses OpenGL
-     * constant)
-     * @since 16.03.07
-     */
-    void depthTestEnable(long depthTest);
+    void clear(int bitfield, float red, float green, float blue, float alpha, float depth);
 
     /**
      * Disables depth testing.
@@ -255,21 +246,117 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
     void depthTestDisable();
 
     /**
-     * Retrieves the framebuffer object that represents the default framebuffer.
+     * Enables depth testing.
      *
-     * @return the default framebuffer.
+     * @param depthTest the type of depth testing to perform (Uses OpenGL
+     * constant)
      * @since 16.03.07
      */
-    FramebufferT framebufferGetDefault();
+    void depthTestEnable(int depthTest);
+
+    void drawQueryBeginConditionalRender(QueryT query, int mode);
 
     /**
-     * Checks if the framebuffer is complete.
+     * Creates a new DrawQuery object.
      *
-     * @param framebuffer the framebuffer.
-     * @return true if the framebuffer is complete.
+     * @return the DrawQuery object.
      * @since 16.03.07
      */
-    boolean framebufferIsComplete(FramebufferT framebuffer);
+    QueryT drawQueryCreate();
+
+    /**
+     * Deletes the draw query object. This should invalidate the DrawQuery. This
+     * method is allowed to silently ignore when passed an invalid DrawQuery
+     * object.
+     *
+     * @param query the DrawQuery object.
+     * @since 16.03.07
+     */
+    void drawQueryDelete(QueryT query);
+
+    /**
+     * Disables the conditional.
+     *
+     * @param condition the conditional.
+     * @since 16.03.07
+     */
+    void drawQueryDisable(int condition);
+
+    /**
+     * Enables the conditional requirement for the specified DrawQuery.
+     *
+     * @param condition the conditional requirement for the DrawQuery to
+     * succeed.
+     * @param query the DrawQuery object.
+     * @since 16.03.07
+     */
+    void drawQueryEnable(int condition, QueryT query);
+
+    void drawQueryEndConditionRender();
+
+    /**
+     * Adds a color attachment to the framebuffer.
+     *
+     * @param framebuffer the framebuffer object.
+     * @param attachmentId the id to attach to.
+     * @param texture the texture object.
+     * @param mipmapLevel the mipmap level to attach.
+     * @since 16.03.07
+     */
+    void framebufferAddAttachment(FramebufferT framebuffer, int attachmentId, TextureT texture, int mipmapLevel);
+
+    /**
+     * Adds a depth attachment to the framebuffer.
+     *
+     * @param framebuffer the framebuffer object.
+     * @param texture the texture object.
+     * @param mipmapLevel the mipmap level to attach.
+     * @since 16.03.07
+     */
+    void framebufferAddDepthAttachment(FramebufferT framebuffer, TextureT texture, int mipmapLevel);
+
+    /**
+     * Adds a depth-stencil attachment to the framebuffer.
+     *
+     * @param framebuffer the framebuffer object.
+     * @param texture the texture object.
+     * @param mipmapLevel the mipmap level to attach.
+     * @since 16.03.07
+     */
+    void framebufferAddDepthStencilAttachment(FramebufferT framebuffer, TextureT texture, int mipmapLevel);
+
+    /**
+     * Binds the framebuffer object. This will result in writing all draw calls
+     * to the framebuffer. The framebuffer should be valid after this call.
+     *
+     * @param framebuffer the framebuffer object.
+     * @param attachments the list of attachments (uses OpenGL contants)
+     * @since 16.03.07
+     */
+    void framebufferBind(FramebufferT framebuffer, IntBuffer attachments);
+
+    /**
+     * Blits the framebuffer to another framebuffer.
+     *
+     * @param srcFb the framebuffer to read from.
+     * @param srcX0 the leftmost pixel to read.
+     * @param srcY0 the topmost pixel to read.
+     * @param srcX1 the rightmost pixel to read.
+     * @param srcY1 the bottommost pixel to read.
+     * @param dstFb the framebuffer to write to.
+     * @param dstX0 the leftmost pixel to read.
+     * @param dstY0 the topmost pixel to read.
+     * @param dstX1 the rightmost pixel to read.
+     * @param dstY1 the bottommost pixel to read.
+     * @param bitfield the bitfield specifying what to copy.
+     * @param filter the filter to apply. Stencil and depth buffer mandate
+     * linear.
+     * @since 16.03.07
+     */
+    void framebufferBlit(
+            FramebufferT srcFb, int srcX0, int srcY0, int srcX1, int srcY1, 
+            FramebufferT dstFb, int dstX0, int dstY0, int dstX1, int dstY1, 
+            int bitfield, int filter);
 
     /**
      * Allocates a new framebuffer container. This is allowed to not allocate
@@ -292,65 +379,12 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
     void framebufferDelete(FramebufferT framebuffer);
 
     /**
-     * Binds the framebuffer object. This will result in writing all draw calls
-     * to the framebuffer. The framebuffer should be valid after this call.
+     * Retrieves the framebuffer object that represents the default framebuffer.
      *
-     * @param framebuffer the framebuffer object.
-     * @param attachments the list of attachments (uses OpenGL contants)
+     * @return the default framebuffer.
      * @since 16.03.07
      */
-    void framebufferBind(FramebufferT framebuffer, IntBuffer attachments);
-
-    /**
-     * Adds a depth-stencil attachment to the framebuffer.
-     *
-     * @param framebuffer the framebuffer object.
-     * @param texture the texture object.
-     * @param mipmapLevel the mipmap level to attach.
-     * @since 16.03.07
-     */
-    void framebufferAddDepthStencilAttachment(FramebufferT framebuffer, TextureT texture, long mipmapLevel);
-
-    /**
-     * Adds a depth attachment to the framebuffer.
-     *
-     * @param framebuffer the framebuffer object.
-     * @param texture the texture object.
-     * @param mipmapLevel the mipmap level to attach.
-     * @since 16.03.07
-     */
-    void framebufferAddDepthAttachment(FramebufferT framebuffer, TextureT texture, long mipmapLevel);
-
-    /**
-     * Adds a color attachment to the framebuffer.
-     *
-     * @param framebuffer the framebuffer object.
-     * @param attachmentId the id to attach to.
-     * @param texture the texture object.
-     * @param mipmapLevel the mipmap level to attach.
-     * @since 16.03.07
-     */
-    void framebufferAddAttachment(FramebufferT framebuffer, long attachmentId, TextureT texture, long mipmapLevel);
-
-    /**
-     * Blits the framebuffer to another framebuffer.
-     *
-     * @param srcFb the framebuffer to read from.
-     * @param srcX0 the leftmost pixel to read.
-     * @param srcY0 the topmost pixel to read.
-     * @param srcX1 the rightmost pixel to read.
-     * @param srcY1 the bottommost pixel to read.
-     * @param dstFb the framebuffer to write to.
-     * @param dstX0 the leftmost pixel to read.
-     * @param dstY0 the topmost pixel to read.
-     * @param dstX1 the rightmost pixel to read.
-     * @param dstY1 the bottommost pixel to read.
-     * @param bitfield the bitfield specifying what to copy.
-     * @param filter the filter to apply. Stencil and depth buffer mandate
-     * linear.
-     * @since 16.03.07
-     */
-    void framebufferBlit(FramebufferT srcFb, long srcX0, long srcY0, long srcX1, long srcY1, FramebufferT dstFb, long dstX0, long dstY0, long dstX1, long dstY1, long bitfield, long filter);
+    FramebufferT framebufferGetDefault();
 
     /**
      * Reads pixels from a framebuffer and writes them to a buffer object.
@@ -365,7 +399,10 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      * @param dstBuffer the buffer object to write the data to.
      * @since 16.03.07
      */
-    void framebufferGetPixels(FramebufferT framebuffer, long x, long y, long width, long height, long format, long type, BufferT dstBuffer);
+    void framebufferGetPixels(
+            FramebufferT framebuffer, int x, int y, int width, int height, 
+            int format, int type, 
+            BufferT dstBuffer);
 
     /**
      * Reads the pixels from a framebuffer and writes them into a ByteBuffer.
@@ -380,618 +417,19 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      * @param dstBuffer the ByteBuffer to write the data to.
      * @since 16.03.07
      */
-    void framebufferGetPixels(FramebufferT framebuffer, long x, long y, long width, long height, long format, long type, ByteBuffer dstBuffer);
+    void framebufferGetPixels(
+            FramebufferT framebuffer, int x, int y, int width, int height, 
+            int format, int type, 
+            ByteBuffer dstBuffer);
 
     /**
-     * Applies a draw mask.
+     * Checks if the framebuffer is complete.
      *
-     * @param red should the red channel be drawn.
-     * @param green should the green channel be drawn.
-     * @param blue should the blue channel be drawn.
-     * @param alpha should the alpha channel be drawn.
-     * @param depth should the depth channel be drawn.
-     * @param stencil the stencil bitmask.
+     * @param framebuffer the framebuffer.
+     * @return true if the framebuffer is complete.
      * @since 16.03.07
      */
-    void maskApply(boolean red, boolean green, boolean blue, boolean alpha, boolean depth, long stencil);
-
-    /**
-     * Sets polygon draw parameters.
-     *
-     * @param pointSize the size of a point.
-     * @param lineWidth the thickness of a line.
-     * @param frontFace the front face. Uses OpenGL enum.
-     * @param cullFace the face to cull. Uses OpenGL enum; 0 culls nothing.
-     * @param polygonMode the polygon mode. Uses OpenGL enum.
-     * @param offsetFactor the offset factor.
-     * @param offsetUnits the offset units.
-     * @since 16.03.07
-     */
-    void polygonSetParameters(double pointSize, double lineWidth, long frontFace, long cullFace, long polygonMode, double offsetFactor, double offsetUnits);
-
-    /**
-     * The shader program to use.
-     *
-     * @param program the shader program.
-     * @since 16.03.07
-     */
-    void programUse(ProgramT program);
-
-    /**
-     * The location to bind for the attribute name.
-     *
-     * @param program the program object.
-     * @param index the attribute index.
-     * @param name the attribute name.
-     * @since 16.03.07
-     */
-    void programSetAttribLocation(ProgramT program, long index, String name);
-
-    /**
-     * Sets the attributes to write feedback data to.
-     *
-     * @param program the program object.
-     * @param varyings the feedback names.
-     * @since 16.03.07
-     */
-    void programSetFeedbackVaryings(ProgramT program, String[] varyings);
-
-    /**
-     * Sets a uniform double matrix. Support of matrices of size 2x2, 3x3, 4x4
-     * are required.
-     *
-     * @param program the program object.
-     * @param uLoc the uniform index.
-     * @param mat the DoubleBuffer containing 64bit floating point matrix data.
-     * @since 16.03.07
-     */
-    void programSetUniformMatD(ProgramT program, long uLoc, DoubleBuffer mat);
-
-    /**
-     * Sets a uniform float matrix. Support of matrices of size 2x2, 3x3, and
-     * 4x4 are required.
-     *
-     * @param program the program object.
-     * @param uLoc the uniform index.
-     * @param mat the FlaotBuffer containing 32bit floating point matrix data.
-     * @since 16.03.07
-     */
-    void programSetUniformMatF(ProgramT program, long uLoc, FloatBuffer mat);
-
-    /**
-     * Sets a uniform vector of 64bit doubles. Support of vector length 1-4 is
-     * required.
-     *
-     * @param program the program object.
-     * @param uLoc the uniform index.
-     * @param value the values to write.
-     * @since 16.03.07
-     */
-    void programSetUniformD(ProgramT program, long uLoc, double[] value);
-
-    /**
-     * Sets a uniform vector of 32bit floats. Support of vector length 1-4 is
-     * required.
-     *
-     * @param program the program object.
-     * @param uLoc the uniform index.
-     * @param value the values to write.
-     * @since 16.03.07
-     */
-    void programSetUniformF(ProgramT program, long uLoc, float[] value);
-
-    /**
-     * Sets a uniform vector of 32bit integers. Support of vector length 1-4 is
-     * required.
-     *
-     * @param program the program object.
-     * @param uLoc the uniform index.
-     * @param value the values to write.
-     * @since 16.03.07
-     */
-    void programSetUniformI(ProgramT program, long uLoc, int[] value);
-
-    /**
-     * Links the shaders for the program. The program should be valid after this
-     * call.
-     *
-     * @param program the program object.
-     * @param shaders the shaders to link.
-     * @since 16.03.07
-     */
-    void programLinkShaders(ProgramT program, Shader[] shaders);
-
-    /**
-     * Creates a new Program object. This call does not need to generate a valid
-     * program. It only is required to allocate the program object container.
-     *
-     * @return the program object.
-     * @since 16.03.07
-     */
-    ProgramT programCreate();
-
-    /**
-     * Deletes the program object. This should also invalidate the program
-     * handle. This method is allowed to silently ignore when passed an invalid
-     * program object.
-     *
-     * @param program the program object.
-     * @since 16.03.07
-     */
-    void programDelete(ProgramT program);
-
-    /**
-     * Sets the shader storage in a program.
-     *
-     * @param program the program object.
-     * @param storageName the name of the shader storage.
-     * @param buffer the buffer object to bind as shader storage.
-     * @param bindingPoint the binding point of the shader storage.
-     * @since 16.03.07
-     */
-    void programSetStorage(ProgramT program, String storageName, BufferT buffer, long bindingPoint);
-
-    /**
-     * Sets a uniform block in a program.
-     *
-     * @param program the program object.
-     * @param uniformName the uniform name.
-     * @param buffer the buffer object to bind as a uniform block.
-     * @param bindingPoint the binding point for the uniform storage.
-     * @since 16.03.07
-     */
-    void programSetUniformBlock(ProgramT program, String uniformName, BufferT buffer, long bindingPoint);
-
-    /**
-     * Executes the program object as a compute shader.
-     *
-     * @param program the program object to execute.
-     * @param numX the number of compute groups along the x-axis.
-     * @param numY the number of compute groups along the y-axis.
-     * @param numZ the number of compute groups along the z-axis.
-     * @since 16.03.07
-     */
-    void programDispatchCompute(ProgramT program, long numX, long numY, long numZ);
-
-    /**
-     * Sets a buffer object to capture feedback data.
-     *
-     * @param program the program object to bind the feedback to.
-     * @param varyingLoc the attribute to capture data from.
-     * @param buffer the buffer to write the feedback data to.
-     * @since 16.03.07
-     */
-    void programSetFeedbackBuffer(ProgramT program, long varyingLoc, BufferT buffer);
-
-    /**
-     * Retrieves the index id for a uniform by name.
-     *
-     * @param program the program to request the uniform index from.
-     * @param name the name of the uniform.
-     * @return the index location.
-     * @since 16.03.07
-     */
-    long programGetUniformLocation(ProgramT program, String name);
-
-    /**
-     * Constructs a new Sampler Object. A sampler object contains texture
-     * parameters that are applied to shader samplers. The states specified
-     * override the states set by the texture.
-     *
-     * @return the Sampler object.
-     */
-    SamplerT samplerCreate();
-
-    /**
-     * Sets the sampler parameter.
-     *
-     * @param sampler the sampler object.
-     * @param param the sampler parameter name.
-     * @param value the sampler value.
-     * @since 16.03.07
-     */
-    void samplerSetParameter(SamplerT sampler, long param, long value);
-
-    /**
-     * Sets the sampler parameter.
-     *
-     * @param sampler the sampler object.
-     * @param param the sampler parameter name.
-     * @param value the sampler value.
-     * @since 16.03.07
-     */
-    void samplerSetParameter(SamplerT sampler, long param, double value);
-
-    /**
-     * Deletes the sampler object. This should invalidate the Sampler handle.
-     * This method is allowed to silently ignore if supplied an invalid Sampler
-     * object.
-     *
-     * @param sampler the Sampler object.
-     * @since 16.03.07
-     */
-    void samplerDelete(SamplerT sampler);
-
-    /**
-     * Binds the sampler to the specified sampler shader unit. This will
-     * override any texture parameters for the texture bound to the specified
-     * unit.
-     *
-     * @param unit the shader sampler unit.
-     * @param sampler the sampler to bind.
-     * @since 16.03.07
-     */
-    void samplerBind(long unit, SamplerT sampler);
-
-    /**
-     * Enables a scissor test. This will discard any fragments drawn outside the
-     * scissor test rectangle.
-     *
-     * @param left the leftmost pixel of the scissor test rectangle.
-     * @param bottom the bottommost pixel of the scissor test rectangle.
-     * @param width the number of pixels wide for the scissor test rectangle.
-     * @param height the number of pixels tall for the scissor test rectangle.
-     * @since 16.03.07
-     */
-    void scissorTestEnable(long left, long bottom, long width, long height);
-
-    /**
-     * Disables a scissor test.
-     *
-     * @since 16.03.07
-     */
-    void scissorTestDisable();
-
-    /**
-     * Compiles a shader and creates a valid Shader Object.
-     *
-     * @param type the type of shader to create (Uses OpenGL shader type names).
-     * @param source the raw source of the shader
-     * @return the shader object.
-     * @since 16.03.07
-     */
-    ShaderT shaderCompile(long type, String source);
-
-    /**
-     * Gets the shader info log. This should hold any compilation information.
-     *
-     * @param shader the shader object.
-     * @return the info log.
-     * @since 16.03.07
-     */
-    String shaderGetInfoLog(ShaderT shader);
-
-    /**
-     * Retrieves the parameter value of the shader object.
-     *
-     * @param shader the shader object name.
-     * @param pName the parameter name (uses OpenGL shader parameter name).
-     * @return the shader parameter value.
-     * @since 16.03.07
-     */
-    long shaderGetParameter(ShaderT shader, long pName);
-
-    /**
-     * Deletes the shader object. This should invalidate the shader object. Any
-     * programs linked using this shader will be unaffected. This call is
-     * allowed to silently ignore when passed an invalid Shader object.
-     *
-     * @param shader the shader object.
-     * @since 16.03.07
-     */
-    void shaderDelete(ShaderT shader);
-
-    /**
-     * Allocates a new immutable texture object with backing memory. The texture
-     * should be valid after this call. A minimum width, depth, and height value
-     * of 1 must be specified. A 1D texture is returned if height and depth are
-     * 1. A 2D texture is returned if depth is 1 and height is greater than 1.
-     * Otherwise a 3D texture is returned.
-     *
-     * @param mipmaps the number of mipmaps to allocate.
-     * @param internalFormat the internal pixel format to use. (Uses OpenGL
-     * internal format glEnum).
-     * @param width the number of pixels wide for the texture. Minimum value is
-     * 1.
-     * @param height The number of pixels tall for the texture. Minimum value is
-     * 1.
-     * @param depth The number of pixels deep for the texture. Minimum value is
-     * 1.
-     * @return the Texture Object.
-     * @since 16.03.07
-     */
-    TextureT textureAllocate(long mipmaps, long internalFormat, long width, long height, long depth);
-
-    /**
-     * Binds the texture to the specified sampler unit id.
-     *
-     * @param texture the texture object.
-     * @param unit the sampler id.
-     * @since 16.03.07
-     */
-    void textureBind(TextureT texture, long unit);
-
-    /**
-     * Deletes a texture. This should also invalidate the texture handle. This
-     * method is allowed to silently ignore when passed an invalid texture.
-     *
-     * @param texture the texture object.
-     * @since 16.03.08
-     */
-    void textureDelete(TextureT texture);
-
-    /**
-     * Sets data in the texture. The texture's memory must be allocated prior to
-     * calling this method. 1D textures expect yOffset and zOffset both to be 0
-     * and for height and depth to be 1. 2D textures expect zOffset to be 0 and
-     * depth to be 1.
-     *
-     * @param texture the texture object.
-     * @param level the mipmap level to write data to.
-     * @param xOffset the offset along the x-axis.
-     * @param yOffset the offset along the y-axis. Expected to be 0 if texture
-     * is 1D.
-     * @param zOffset the offset along the z-axis. Expected to be 0 if texture
-     * is 1D or 2D.
-     * @param width the width of the data uploaded.
-     * @param height the height of the data uploaded. Expected to be 1 if
-     * texture is 1D.
-     * @param depth the depth of the data uploaded. Expected to be 1 if texture
-     * is 1D or 2D.
-     * @param format the pixel format.
-     * @param type the pixel packing type.
-     * @param data the data.
-     * @since 16.03.08
-     */
-    void textureSetData(TextureT texture, long level, long xOffset, long yOffset, long zOffset, long width, long height, long depth, long format, long type, ByteBuffer data);
-
-    /**
-     * Reads data from a texture. The texture must have its memory allocated
-     * prior to calling this method. Calling this method before data is set may
-     * result in reading garbage data.
-     *
-     * @param texture the texture object.
-     * @param level the mipmap level.
-     * @param format the pixel format.
-     * @param type the pixel pack type.
-     * @param out the ByteBuffer to write the data to.
-     * @since 16.03.08
-     */
-    void textureGetData(TextureT texture, long level, long format, long type, ByteBuffer out);
-
-    /**
-     * Invalidates a mipmap level of the texture. This indicates that the mipmap
-     * level may be garbage collected.
-     *
-     * @param texture the texture object.
-     * @param level the mipmap level.
-     * @since 16.03.08
-     */
-    void textureInvalidateData(TextureT texture, long level);
-
-    /**
-     * Invalidates a segment of a mipmap level of the texture. This indicates
-     * that part of the mipmap may be garbage collected.
-     *
-     * @param texture the texture object.
-     * @param level the mipmap level.
-     * @param xOffset the offset along the x-axis for the invalidation cube.
-     * @param yOffset the offset along the y-axis for the invalidation cube.
-     * Expected to be 0 for 1D textures.
-     * @param zOffset the offset along the z-axis for the invalidation cube.
-     * Expected to be 0 for 1D or 2D textures.
-     * @param width the width of the invalidation cube.
-     * @param height the height of the invalidation cube. Expected to be 0 for
-     * 1D textures.
-     * @param depth the depth of the invalidation cube. Expected to be 0 for 1D
-     * and 2D textures.
-     * @since 16.03.08
-     */
-    void textureInvalidateRange(TextureT texture, long level, long xOffset, long yOffset, long zOffset, long width, long height, long depth);
-
-    /**
-     * Generates mipmaps for the texture object. This method generates all
-     * mipmap levels based on the base mipmap. The texture must be valid for
-     * this method to succeed. Calling this method without setting the base
-     * mipmap will result in undefined behavior.
-     *
-     * @param texture the texture object.
-     * @since 16.03.08
-     */
-    void textureGenerateMipmap(TextureT texture);
-
-    /**
-     * Retrieves the maximum size in pixels for any dimension of a texture.
-     *
-     * @return the maximum size along any axis.
-     * @since 16.03.08
-     */
-    long textureGetMaxSize();
-
-    /**
-     * Retrieves the maximum number of textures bound for a shader stage.
-     * Usually this will be 16.
-     *
-     * @return the maximum number of textures allowed to be bound.
-     * @since 16.03.08
-     */
-    long textureGetMaxBoundTextures();
-
-    /**
-     * Retrieves the size in pixels for texture page width. This method is
-     * intended to be used with sparse textures.
-     *
-     * @param texture the texture object.
-     * @return the size along the x-axis.
-     * @since 16.03.08
-     */
-    long textureGetPageWidth(TextureT texture);
-
-    /**
-     * Retrieves the size in pixels for texture page height. This method is
-     * intended to be used with sparse textures.
-     *
-     * @param texture the texture.
-     * @return the size along the y-axis.
-     * @since 16.03.08
-     */
-    long textureGetPageHeight(TextureT texture);
-
-    /**
-     * Retrieves the size in pixels for texture page depth. This method is
-     * intended to be used with sparse textures.
-     *
-     * @param texture the texture.
-     * @return the size along the z-axis.
-     * @since 16.03.08
-     */
-    long textureGetPageDepth(TextureT texture);
-
-    /**
-     * Retrieves the preferred format type for the corresponding internal
-     * format. For example, some GPUs prefer using BGRA instead of RGBA. This
-     * is, however, usually only a thing on older hardware.
-     *
-     * @param internalFormat the internal pixel format.
-     * @return the preferred pixel format.
-     * @since 16.03.08
-     */
-    long textureGetPreferredFormat(long internalFormat);
-
-    /**
-     * Sets a texture parameter.
-     *
-     * @param texture the texture object.
-     * @param param the parameter name.
-     * @param value the parameter value.
-     * @since 16.03.08
-     */
-    void textureSetParameter(TextureT texture, long param, long value);
-
-    /**
-     * Sets the texture parameter.
-     *
-     * @param texture the texture object.
-     * @param param the parameter name.
-     * @param value the parameter value.
-     * @since 16.03.08
-     */
-    void textureSetParameter(TextureT texture, long param, double value);
-
-    /**
-     * Allocates a segment of a sparse texture. All pages within the specified
-     * allocation cube are allocated. The call is allowed to silently ignore
-     * when the pages are already allocated.
-     *
-     * @param texture the texture object.
-     * @param level the mipmap level.
-     * @param xOffset the offset along the x-axis in pixels.
-     * @param yOffset the offset along the y-axis in pixels.
-     * @param zOffset the offset along the z-axis in pixels.
-     * @param width the width of the allocation cube in pixels.
-     * @param height the height of the allocation cube in pixels. Expected to be
-     * 1 in 1D textures.
-     * @param depth the depth of the allocation cube in pixels. Expected to be 1
-     * in 1D and 2D textures.
-     * @since 16.03.08
-     */
-    void textureAllocatePage(TextureT texture, long level, long xOffset, long yOffset, long zOffset, long width, long height, long depth);
-
-    /**
-     * Deallocates a segment of a sparse texture. All pages within the specified
-     * allocation cube are deallocated. The call is allowed to silently ignore
-     * when the pages are already allocated.
-     *
-     * @param texture the texture object.
-     * @param level the mipmap level.
-     * @param xOffset the offset along the x-axis in pixels.
-     * @param yOffset the offset along the y-axis in pixels. Expected to be 0 in
-     * 1D textures.
-     * @param zOffset the offset along the z-axis in pixels. Expected to be 0 in
-     * 1D and 2D textures.
-     * @param width the width of the deallocation cube in pixels.
-     * @param height the height of the deallocation cube in pixels. Expected to
-     * be 1 in 1D textures.
-     * @param depth the depth of the deallocation cube in pixels. Expected to be
-     * 1 in 1D and 2D textures.
-     */
-    void textureDeallocatePage(TextureT texture, long level, long xOffset, long yOffset, long zOffset, long width, long height, long depth);
-
-    /**
-     * Retrieves the maximum level of anisotropic filtering supported for
-     * textures.
-     *
-     * @return the maximum level of anisotropic filtering.
-     */
-    double textureGetMaxAnisotropy();
-
-    // vertexArray
-    VertexArrayT vertexArrayCreate();
-
-    void vertexArrayDrawElementsIndirect(VertexArrayT vao, BufferT cmdBuffer, long drawMode, long indexType, long offset);
-
-    void vertexArrayDrawArraysIndirect(VertexArrayT vao, BufferT cmdBuffer, long drawMode, long offset);
-
-    void vertexArrayMultiDrawArrays(VertexArrayT vao, long drawMode, IntBuffer first, IntBuffer count);
-
-    void vertexArrayDrawElementsInstanced(VertexArrayT vao, long drawMode, long count, long type, long offset, long instanceCount);
-
-    void vertexArrayDrawArraysInstanced(VertexArrayT vao, long drawMode, long first, long count, long instanceCount);
-
-    void vertexArrayDrawElements(VertexArrayT vao, long drawMode, long count, long type, long offset);
-
-    void vertexArrayDrawArrays(VertexArrayT vao, long drawMode, long start, long count);
-
-    void vertexArrayDrawTransformFeedback(VertexArrayT vao, long drawMode, long start, long count);
-
-    void vertexArrayDelete(VertexArrayT vao);
-
-    void vertexArrayAttachIndexBuffer(VertexArrayT vao, BufferT buffer);
-
-    void vertexArrayAttachBuffer(VertexArrayT vao, long index, BufferT buffer, long size, long type, long stride, long offset, long divisor);
-
-    //viewport
-    void viewportApply(long x, long y, long width, long height);
-
-    /**
-     * Enables the conditional requirement for the specified DrawQuery.
-     *
-     * @param condition the conditional requirement for the DrawQuery to
-     * succeed.
-     * @param query the DrawQuery object.
-     * @since 16.03.07
-     */
-    void drawQueryEnable(long condition, QueryT query);
-
-    /**
-     * Disables the conditional.
-     *
-     * @param condition the conditional.
-     * @since 16.03.07
-     */
-    void drawQueryDisable(long condition);
-
-    void drawQueryBeginConditionalRender(QueryT query, long mode);
-
-    void drawQueryEndConditionRender();
-
-    /**
-     * Creates a new DrawQuery object.
-     *
-     * @return the DrawQuery object.
-     * @since 16.03.07
-     */
-    QueryT drawQueryCreate();
-
-    /**
-     * Deletes the draw query object. This should invalidate the DrawQuery. This
-     * method is allowed to silently ignore when passed an invalid DrawQuery
-     * object.
-     *
-     * @param query the DrawQuery object.
-     * @since 16.03.07
-     */
-    void drawQueryDelete(QueryT query);
+    boolean framebufferIsComplete(FramebufferT framebuffer);
 
     /**
      * Attempts to guess the generic format from the supplied internal format.
@@ -1100,4 +538,601 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
                 return GL11.GL_RGBA;
         }
     }
+
+    /**
+     * Applies a draw mask.
+     *
+     * @param red should the red channel be drawn.
+     * @param green should the green channel be drawn.
+     * @param blue should the blue channel be drawn.
+     * @param alpha should the alpha channel be drawn.
+     * @param depth should the depth channel be drawn.
+     * @param stencil the stencil bitmask.
+     * @since 16.03.07
+     */
+    void maskApply(
+            boolean red, boolean green, boolean blue, boolean alpha, 
+            boolean depth, 
+            int stencil);
+
+    /**
+     * Sets polygon draw parameters.
+     *
+     * @param pointSize the size of a point.
+     * @param lineWidth the thickness of a line.
+     * @param frontFace the front face. Uses OpenGL enum.
+     * @param cullFace the face to cull. Uses OpenGL enum; 0 culls nothing.
+     * @param polygonMode the polygon mode. Uses OpenGL enum.
+     * @param offsetFactor the offset factor.
+     * @param offsetUnits the offset units.
+     * @since 16.03.07
+     */
+    void polygonSetParameters(
+            float pointSize, float lineWidth, 
+            int frontFace, int cullFace, int polygonMode, 
+            float offsetFactor, float offsetUnits);
+
+    /**
+     * Creates a new Program object. This call does not need to generate a valid
+     * program. It only is required to allocate the program object container.
+     *
+     * @return the program object.
+     * @since 16.03.07
+     */
+    ProgramT programCreate();
+
+    /**
+     * Deletes the program object. This should also invalidate the program
+     * handle. This method is allowed to silently ignore when passed an invalid
+     * program object.
+     *
+     * @param program the program object.
+     * @since 16.03.07
+     */
+    void programDelete(ProgramT program);
+
+    /**
+     * Executes the program object as a compute shader.
+     *
+     * @param program the program object to execute.
+     * @param numX the number of compute groups along the x-axis.
+     * @param numY the number of compute groups along the y-axis.
+     * @param numZ the number of compute groups along the z-axis.
+     * @since 16.03.07
+     */
+    void programDispatchCompute(ProgramT program, int numX, int numY, int numZ);
+
+    /**
+     * Retrieves the index id for a uniform by name.
+     *
+     * @param program the program to request the uniform index from.
+     * @param name the name of the uniform.
+     * @return the index location.
+     * @since 16.03.07
+     */
+    long programGetUniformLocation(ProgramT program, String name);
+
+    /**
+     * Links the shaders for the program. The program should be valid after this
+     * call.
+     *
+     * @param program the program object.
+     * @param shaders the shaders to link.
+     * @since 16.03.07
+     */
+    void programLinkShaders(ProgramT program, Shader[] shaders);
+
+    /**
+     * The location to bind for the attribute name.
+     *
+     * @param program the program object.
+     * @param index the attribute index.
+     * @param name the attribute name.
+     * @since 16.03.07
+     */
+    void programSetAttribLocation(ProgramT program, int index, String name);
+
+    /**
+     * Sets a buffer object to capture feedback data.
+     *
+     * @param program the program object to bind the feedback to.
+     * @param varyingLoc the attribute to capture data from.
+     * @param buffer the buffer to write the feedback data to.
+     * @since 16.03.07
+     */
+    void programSetFeedbackBuffer(ProgramT program, int varyingLoc, BufferT buffer);
+
+    /**
+     * Sets the attributes to write feedback data to.
+     *
+     * @param program the program object.
+     * @param varyings the feedback names.
+     * @since 16.03.07
+     */
+    void programSetFeedbackVaryings(ProgramT program, String[] varyings);
+
+    /**
+     * Sets the shader storage in a program.
+     *
+     * @param program the program object.
+     * @param storageName the name of the shader storage.
+     * @param buffer the buffer object to bind as shader storage.
+     * @param bindingPoint the binding point of the shader storage.
+     * @since 16.03.07
+     */
+    void programSetStorage(ProgramT program, String storageName, BufferT buffer, int bindingPoint);
+
+    /**
+     * Sets a uniform block in a program.
+     *
+     * @param program the program object.
+     * @param uniformName the uniform name.
+     * @param buffer the buffer object to bind as a uniform block.
+     * @param bindingPoint the binding point for the uniform storage.
+     * @since 16.03.07
+     */
+    void programSetUniformBlock(ProgramT program, String uniformName, BufferT buffer, int bindingPoint);
+
+    /**
+     * Sets a uniform vector of 64bit doubles. Support of vector length 1-4 is
+     * required.
+     *
+     * @param program the program object.
+     * @param uLoc the uniform index.
+     * @param value the values to write.
+     * @since 16.03.07
+     */
+    void programSetUniformD(ProgramT program, int uLoc, double[] value);
+
+    /**
+     * Sets a uniform vector of 32bit floats. Support of vector length 1-4 is
+     * required.
+     *
+     * @param program the program object.
+     * @param uLoc the uniform index.
+     * @param value the values to write.
+     * @since 16.03.07
+     */
+    void programSetUniformF(ProgramT program, int uLoc, float[] value);
+
+    /**
+     * Sets a uniform vector of 32bit integers. Support of vector length 1-4 is
+     * required.
+     *
+     * @param program the program object.
+     * @param uLoc the uniform index.
+     * @param value the values to write.
+     * @since 16.03.07
+     */
+    void programSetUniformI(ProgramT program, int uLoc, int[] value);
+
+    /**
+     * Sets a uniform double matrix. Support of matrices of size 2x2, 3x3, 4x4
+     * are required.
+     *
+     * @param program the program object.
+     * @param uLoc the uniform index.
+     * @param mat the DoubleBuffer containing 64bit floating point matrix data.
+     * @since 16.03.07
+     */
+    void programSetUniformMatD(ProgramT program, int uLoc, DoubleBuffer mat);
+
+    /**
+     * Sets a uniform float matrix. Support of matrices of size 2x2, 3x3, and
+     * 4x4 are required.
+     *
+     * @param program the program object.
+     * @param uLoc the uniform index.
+     * @param mat the FlaotBuffer containing 32bit floating point matrix data.
+     * @since 16.03.07
+     */
+    void programSetUniformMatF(ProgramT program, int uLoc, FloatBuffer mat);
+
+    /**
+     * The shader program to use.
+     *
+     * @param program the shader program.
+     * @since 16.03.07
+     */
+    void programUse(ProgramT program);
+
+    /**
+     * Binds the sampler to the specified sampler shader unit. This will
+     * override any texture parameters for the texture bound to the specified
+     * unit.
+     *
+     * @param unit the shader sampler unit.
+     * @param sampler the sampler to bind.
+     * @since 16.03.07
+     */
+    void samplerBind(int unit, SamplerT sampler);
+
+    /**
+     * Constructs a new Sampler Object. A sampler object contains texture
+     * parameters that are applied to shader samplers. The states specified
+     * override the states set by the texture.
+     *
+     * @return the Sampler object.
+     */
+    SamplerT samplerCreate();
+
+    /**
+     * Deletes the sampler object. This should invalidate the Sampler handle.
+     * This method is allowed to silently ignore if supplied an invalid Sampler
+     * object.
+     *
+     * @param sampler the Sampler object.
+     * @since 16.03.07
+     */
+    void samplerDelete(SamplerT sampler);
+
+    /**
+     * Sets the sampler parameter.
+     *
+     * @param sampler the sampler object.
+     * @param param the sampler parameter name.
+     * @param value the sampler value.
+     * @since 16.03.07
+     */
+    void samplerSetParameter(SamplerT sampler, int param, int value);
+
+    /**
+     * Sets the sampler parameter.
+     *
+     * @param sampler the sampler object.
+     * @param param the sampler parameter name.
+     * @param value the sampler value.
+     * @since 16.03.07
+     */
+    void samplerSetParameter(SamplerT sampler, int param, float value);
+
+    /**
+     * Disables a scissor test.
+     *
+     * @since 16.03.07
+     */
+    void scissorTestDisable();
+
+    /**
+     * Enables a scissor test. This will discard any fragments drawn outside the
+     * scissor test rectangle.
+     *
+     * @param left the leftmost pixel of the scissor test rectangle.
+     * @param bottom the bottommost pixel of the scissor test rectangle.
+     * @param width the number of pixels wide for the scissor test rectangle.
+     * @param height the number of pixels tall for the scissor test rectangle.
+     * @since 16.03.07
+     */
+    void scissorTestEnable(int left, int bottom, int width, int height);
+
+    /**
+     * Compiles a shader and creates a valid Shader Object.
+     *
+     * @param type the type of shader to create (Uses OpenGL shader type names).
+     * @param source the raw source of the shader
+     * @return the shader object.
+     * @since 16.03.07
+     */
+    ShaderT shaderCompile(int type, String source);
+
+    /**
+     * Deletes the shader object. This should invalidate the shader object. Any
+     * programs linked using this shader will be unaffected. This call is
+     * allowed to silently ignore when passed an invalid Shader object.
+     *
+     * @param shader the shader object.
+     * @since 16.03.07
+     */
+    void shaderDelete(ShaderT shader);
+
+    /**
+     * Gets the shader info log. This should hold any compilation information.
+     *
+     * @param shader the shader object.
+     * @return the info log.
+     * @since 16.03.07
+     */
+    String shaderGetInfoLog(ShaderT shader);
+
+    /**
+     * Retrieves the parameter value of the shader object.
+     *
+     * @param shader the shader object name.
+     * @param pName the parameter name (uses OpenGL shader parameter name).
+     * @return the shader parameter value.
+     * @since 16.03.07
+     */
+    int shaderGetParameter(ShaderT shader, int pName);
+
+    /**
+     * Allocates a new immutable texture object with backing memory. The texture
+     * should be valid after this call. A minimum width, depth, and height value
+     * of 1 must be specified. A 1D texture is returned if height and depth are
+     * 1. A 2D texture is returned if depth is 1 and height is greater than 1.
+     * Otherwise a 3D texture is returned.
+     *
+     * @param mipmaps the number of mipmaps to allocate.
+     * @param internalFormat the internal pixel format to use. (Uses OpenGL
+     * internal format glEnum).
+     * @param width the number of pixels wide for the texture. Minimum value is
+     * 1.
+     * @param height The number of pixels tall for the texture. Minimum value is
+     * 1.
+     * @param depth The number of pixels deep for the texture. Minimum value is
+     * 1.
+     * @return the Texture Object.
+     * @since 16.03.07
+     */
+    TextureT textureAllocate(int mipmaps, int internalFormat, int width, int height, int depth);
+
+    /**
+     * Allocates a segment of a sparse texture. All pages within the specified
+     * allocation cube are allocated. The call is allowed to silently ignore
+     * when the pages are already allocated.
+     *
+     * @param texture the texture object.
+     * @param level the mipmap level.
+     * @param xOffset the offset along the x-axis in pixels.
+     * @param yOffset the offset along the y-axis in pixels.
+     * @param zOffset the offset along the z-axis in pixels.
+     * @param width the width of the allocation cube in pixels.
+     * @param height the height of the allocation cube in pixels. Expected to be
+     * 1 in 1D textures.
+     * @param depth the depth of the allocation cube in pixels. Expected to be 1
+     * in 1D and 2D textures.
+     * @since 16.03.08
+     */
+    void textureAllocatePage(
+            TextureT texture, int level, 
+            int xOffset, int yOffset, int zOffset, 
+            int width, int height, int depth);
+
+    /**
+     * Binds the texture to the specified sampler unit id.
+     *
+     * @param texture the texture object.
+     * @param unit the sampler id.
+     * @since 16.03.07
+     */
+    void textureBind(TextureT texture, int unit);
+
+    /**
+     * Deallocates a segment of a sparse texture. All pages within the specified
+     * allocation cube are deallocated. The call is allowed to silently ignore
+     * when the pages are already allocated.
+     *
+     * @param texture the texture object.
+     * @param level the mipmap level.
+     * @param xOffset the offset along the x-axis in pixels.
+     * @param yOffset the offset along the y-axis in pixels. Expected to be 0 in
+     * 1D textures.
+     * @param zOffset the offset along the z-axis in pixels. Expected to be 0 in
+     * 1D and 2D textures.
+     * @param width the width of the deallocation cube in pixels.
+     * @param height the height of the deallocation cube in pixels. Expected to
+     * be 1 in 1D textures.
+     * @param depth the depth of the deallocation cube in pixels. Expected to be
+     * 1 in 1D and 2D textures.
+     */
+    void textureDeallocatePage(
+            TextureT texture, int level, 
+            int xOffset, int yOffset, int zOffset, 
+            int width, int height, int depth);
+
+    /**
+     * Deletes a texture. This should also invalidate the texture handle. This
+     * method is allowed to silently ignore when passed an invalid texture.
+     *
+     * @param texture the texture object.
+     * @since 16.03.08
+     */
+    void textureDelete(TextureT texture);
+
+    /**
+     * Generates mipmaps for the texture object. This method generates all
+     * mipmap levels based on the base mipmap. The texture must be valid for
+     * this method to succeed. Calling this method without setting the base
+     * mipmap will result in undefined behavior.
+     *
+     * @param texture the texture object.
+     * @since 16.03.08
+     */
+    void textureGenerateMipmap(TextureT texture);
+
+    /**
+     * Reads data from a texture. The texture must have its memory allocated
+     * prior to calling this method. Calling this method before data is set may
+     * result in reading garbage data.
+     *
+     * @param texture the texture object.
+     * @param level the mipmap level.
+     * @param format the pixel format.
+     * @param type the pixel pack type.
+     * @param out the ByteBuffer to write the data to.
+     * @since 16.03.08
+     */
+    void textureGetData(
+            TextureT texture, int level, 
+            int format, int type, 
+            ByteBuffer out);
+
+    /**
+     * Retrieves the maximum level of anisotropic filtering supported for
+     * textures.
+     *
+     * @return the maximum level of anisotropic filtering.
+     */
+    double textureGetMaxAnisotropy();
+
+    /**
+     * Retrieves the maximum number of textures bound for a shader stage.
+     * Usually this will be 16.
+     *
+     * @return the maximum number of textures allowed to be bound.
+     * @since 16.03.08
+     */
+    long textureGetMaxBoundTextures();
+
+    /**
+     * Retrieves the maximum size in pixels for any dimension of a texture.
+     *
+     * @return the maximum size along any axis.
+     * @since 16.03.08
+     */
+    long textureGetMaxSize();
+
+    /**
+     * Retrieves the size in pixels for texture page depth. This method is
+     * intended to be used with sparse textures.
+     *
+     * @param texture the texture.
+     * @return the size along the z-axis.
+     * @since 16.03.08
+     */
+    long textureGetPageDepth(TextureT texture);
+
+    /**
+     * Retrieves the size in pixels for texture page height. This method is
+     * intended to be used with sparse textures.
+     *
+     * @param texture the texture.
+     * @return the size along the y-axis.
+     * @since 16.03.08
+     */
+    long textureGetPageHeight(TextureT texture);
+
+    /**
+     * Retrieves the size in pixels for texture page width. This method is
+     * intended to be used with sparse textures.
+     *
+     * @param texture the texture object.
+     * @return the size along the x-axis.
+     * @since 16.03.08
+     */
+    long textureGetPageWidth(TextureT texture);
+
+    /**
+     * Retrieves the preferred format type for the corresponding internal
+     * format. For example, some GPUs prefer using BGRA instead of RGBA. This
+     * is, however, usually only a thing on older hardware.
+     *
+     * @param internalFormat the internal pixel format.
+     * @return the preferred pixel format.
+     * @since 16.03.08
+     */
+    int textureGetPreferredFormat(int internalFormat);
+
+    /**
+     * Invalidates a mipmap level of the texture. This indicates that the mipmap
+     * level may be garbage collected.
+     *
+     * @param texture the texture object.
+     * @param level the mipmap level.
+     * @since 16.03.08
+     */
+    void textureInvalidateData(TextureT texture, int level);
+
+    /**
+     * Invalidates a segment of a mipmap level of the texture. This indicates
+     * that part of the mipmap may be garbage collected.
+     *
+     * @param texture the texture object.
+     * @param level the mipmap level.
+     * @param xOffset the offset along the x-axis for the invalidation cube.
+     * @param yOffset the offset along the y-axis for the invalidation cube.
+     * Expected to be 0 for 1D textures.
+     * @param zOffset the offset along the z-axis for the invalidation cube.
+     * Expected to be 0 for 1D or 2D textures.
+     * @param width the width of the invalidation cube.
+     * @param height the height of the invalidation cube. Expected to be 0 for
+     * 1D textures.
+     * @param depth the depth of the invalidation cube. Expected to be 0 for 1D
+     * and 2D textures.
+     * @since 16.03.08
+     */
+    void textureInvalidateRange(
+            TextureT texture, int level, 
+            int xOffset, int yOffset, int zOffset, 
+            int width, int height, int depth);
+
+    /**
+     * Sets data in the texture. The texture's memory must be allocated prior to
+     * calling this method. 1D textures expect yOffset and zOffset both to be 0
+     * and for height and depth to be 1. 2D textures expect zOffset to be 0 and
+     * depth to be 1.
+     *
+     * @param texture the texture object.
+     * @param level the mipmap level to write data to.
+     * @param xOffset the offset along the x-axis.
+     * @param yOffset the offset along the y-axis. Expected to be 0 if texture
+     * is 1D.
+     * @param zOffset the offset along the z-axis. Expected to be 0 if texture
+     * is 1D or 2D.
+     * @param width the width of the data uploaded.
+     * @param height the height of the data uploaded. Expected to be 1 if
+     * texture is 1D.
+     * @param depth the depth of the data uploaded. Expected to be 1 if texture
+     * is 1D or 2D.
+     * @param format the pixel format.
+     * @param type the pixel packing type.
+     * @param data the data.
+     * @since 16.03.08
+     */
+    void textureSetData(
+            TextureT texture, int level, 
+            int xOffset, int yOffset, int zOffset, 
+            int width, int height, int depth, 
+            int format, int type, ByteBuffer data);
+
+    /**
+     * Sets a texture parameter.
+     *
+     * @param texture the texture object.
+     * @param param the parameter name.
+     * @param value the parameter value.
+     * @since 16.03.08
+     */
+    void textureSetParameter(TextureT texture, int param, int value);
+
+    /**
+     * Sets the texture parameter.
+     *
+     * @param texture the texture object.
+     * @param param the parameter name.
+     * @param value the parameter value.
+     * @since 16.03.08
+     */
+    void textureSetParameter(TextureT texture, int param, float value);
+
+    void vertexArrayAttachBuffer(
+            VertexArrayT vao, int index, 
+            BufferT buffer, int size, int type, 
+            int stride, long offset, int divisor);
+
+    void vertexArrayAttachIndexBuffer(VertexArrayT vao, BufferT buffer);
+
+    // vertexArray
+    VertexArrayT vertexArrayCreate();
+
+    void vertexArrayDelete(VertexArrayT vao);
+
+    void vertexArrayDrawArrays(VertexArrayT vao, int drawMode, int start, int count);
+
+    void vertexArrayDrawArraysIndirect(VertexArrayT vao, BufferT cmdBuffer, int drawMode, long offset);
+
+    void vertexArrayDrawArraysInstanced(VertexArrayT vao, int drawMode, int first, int count, int instanceCount);
+
+    void vertexArrayDrawElements(VertexArrayT vao, int drawMode, int count, int type, long offset);
+
+    void vertexArrayDrawElementsIndirect(VertexArrayT vao, BufferT cmdBuffer, int drawMode, int indexType, long offset);
+
+    void vertexArrayDrawElementsInstanced(VertexArrayT vao, int drawMode, int count, int type, long offset, int instanceCount);
+
+    void vertexArrayDrawTransformFeedback(VertexArrayT vao, int drawMode, int start, int count);
+
+    void vertexArrayMultiDrawArrays(VertexArrayT vao, int drawMode, IntBuffer first, IntBuffer count);
+
+    //viewport
+    void viewportApply(int x, int y, int width, int height);
+
 }
