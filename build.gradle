@@ -16,5 +16,5 @@ repositories {
 
 dependencies {
     compile 'org.slf4j:slf4j-api:1.7.+'
-    compile "org.lwjgl:lwjgl:3.0.0-SNAPSHOT"      
+    compile 'org.lwjgl:lwjgl:3.0.0-SNAPSHOT'    
 }
