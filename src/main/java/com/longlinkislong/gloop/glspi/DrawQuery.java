@@ -23,23 +23,24 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.longlinkislong.gloop.spi;
+package com.longlinkislong.gloop.glspi;
 
 /**
- * A Service Provider Interface for a Program object. A Program object is a
- * self-contained shader program used to process vertex data and render it to a
- * framebuffer.
+ * Service provider interface for DrawQuery objects for use with the
+ * corresponding Driver implementation. The DrawQuery object is intended to
+ * supply conditional draws. A conditional draw is composed of a set of
+ * conditionals and a test draw. The more complex draw is then performed if the
+ * test draw passes all conditionals.
  *
  * @author zmichaels
- * @since 16.03.08
+ * @since 16.03.07
  */
-public interface Program {
+public interface DrawQuery {
 
     /**
-     * Checks if the program is valid.
-     *
-     * @return true if the program is valid.
-     * @since 16.03.08
+     * Checks if the DrawQuery is valid.
+     * @return true if the DrawQuery is valid.
+     * @since 16.03.07
      */
     boolean isValid();
 }

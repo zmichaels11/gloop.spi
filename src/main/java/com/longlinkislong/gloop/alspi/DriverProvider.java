@@ -3,15 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.longlinkislong.gloop.spi;
+package com.longlinkislong.gloop.alspi;
 
 /**
  *
  * @author zmichaels
  */
-public interface ContextDriverProvider {
-
-    ContextDriver getContextDriver();
-
-    String getContextName();
+public interface DriverProvider {
+    Driver getDriverInstance();
+    default String getDriverName() {
+        return getDriverInstance().getClass().getSimpleName();
+    }
 }

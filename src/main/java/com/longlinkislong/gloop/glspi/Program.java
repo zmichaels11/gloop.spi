@@ -23,20 +23,22 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.longlinkislong.gloop.spi;
+package com.longlinkislong.gloop.glspi;
 
 /**
- * A Service Provider Interface for a Texture object. Texture objects contain
- * image data as 1D, 2D, or 3D array of data.
+ * A Service Provider Interface for a Program object. A Program object is a
+ * self-contained shader program used to process vertex data and render it to a
+ * framebuffer.
  *
  * @author zmichaels
  * @since 16.03.08
  */
-public interface Texture {
+public interface Program {
 
     /**
-     * Checks if the texture is valid.
-     * @return true if the texture is valid.
+     * Checks if the program is valid.
+     *
+     * @return true if the program is valid.
      * @since 16.03.08
      */
     boolean isValid();

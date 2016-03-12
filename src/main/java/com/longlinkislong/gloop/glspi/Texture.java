@@ -23,24 +23,21 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.longlinkislong.gloop.spi;
+package com.longlinkislong.gloop.glspi;
 
 /**
- * Service provider interface for DrawQuery objects for use with the
- * corresponding Driver implementation. The DrawQuery object is intended to
- * supply conditional draws. A conditional draw is composed of a set of
- * conditionals and a test draw. The more complex draw is then performed if the
- * test draw passes all conditionals.
+ * A Service Provider Interface for a Texture object. Texture objects contain
+ * image data as 1D, 2D, or 3D array of data.
  *
  * @author zmichaels
- * @since 16.03.07
+ * @since 16.03.08
  */
-public interface DrawQuery {
+public interface Texture {
 
     /**
-     * Checks if the DrawQuery is valid.
-     * @return true if the DrawQuery is valid.
-     * @since 16.03.07
+     * Checks if the texture is valid.
+     * @return true if the texture is valid.
+     * @since 16.03.08
      */
     boolean isValid();
 }

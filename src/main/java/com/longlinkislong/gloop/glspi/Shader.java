@@ -23,20 +23,21 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.longlinkislong.gloop.spi;
+package com.longlinkislong.gloop.glspi;
 
 /**
- * A Service Provider Interface for a Framebuffer object. Framebuffer objects
- * are targets for rendering to.
+ * A Service Provider Interface for a Shader object. Shader objects are
+ * individual stages or modules that may be combined to form a Program object.
  *
  * @author zmichaels
  * @since 16.03.08
  */
-public interface Framebuffer {
+public interface Shader {
 
     /**
-     * Checks if the Framebuffer object is valid.
-     * @return true if the Framebuffer is valid.
+     * Checks if the Shader Object is valid.
+     *
+     * @return true if the Shader Object is valid.
      * @since 16.03.08
      */
     boolean isValid();

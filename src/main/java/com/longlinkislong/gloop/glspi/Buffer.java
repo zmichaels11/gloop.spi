@@ -23,22 +23,23 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.longlinkislong.gloop.spi;
+package com.longlinkislong.gloop.glspi;
 
 /**
- * A Service Provider Interface for a Shader object. Shader objects are
- * individual stages or modules that may be combined to form a Program object.
+ * Service provider interface for Buffer objects for use with the corresponding
+ * implementation of Driver. The Buffer object is intended to supply access to
+ * sequential data.
  *
  * @author zmichaels
- * @since 16.03.08
+ * @since 16.03.07
  */
-public interface Shader {
+public interface Buffer {
 
     /**
-     * Checks if the Shader Object is valid.
+     * Checks if the Buffer Object is valid.
      *
-     * @return true if the Shader Object is valid.
-     * @since 16.03.08
+     * @return true if the Buffer Object is valid.
+     * @since 16.03.07
      */
     boolean isValid();
 }

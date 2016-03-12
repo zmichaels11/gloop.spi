@@ -23,20 +23,20 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.longlinkislong.gloop.spi;
+package com.longlinkislong.gloop.glspi;
 
 /**
- * A Service Provider Interface for a Sampler object.
+ * A Service Provider Interface for a Framebuffer object. Framebuffer objects
+ * are targets for rendering to.
  *
  * @author zmichaels
  * @since 16.03.08
  */
-public interface Sampler {
+public interface Framebuffer {
 
     /**
-     * Checks if the Sampler object is valid.
-     *
-     * @return true if the sampler object is valid.
+     * Checks if the Framebuffer object is valid.
+     * @return true if the Framebuffer is valid.
      * @since 16.03.08
      */
     boolean isValid();

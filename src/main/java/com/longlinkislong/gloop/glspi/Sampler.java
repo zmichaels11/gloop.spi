@@ -23,23 +23,21 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.longlinkislong.gloop.spi;
+package com.longlinkislong.gloop.glspi;
 
 /**
- * Service provider interface for Buffer objects for use with the corresponding
- * implementation of Driver. The Buffer object is intended to supply access to
- * sequential data.
+ * A Service Provider Interface for a Sampler object.
  *
  * @author zmichaels
- * @since 16.03.07
+ * @since 16.03.08
  */
-public interface Buffer {
+public interface Sampler {
 
     /**
-     * Checks if the Buffer Object is valid.
+     * Checks if the Sampler object is valid.
      *
-     * @return true if the Buffer Object is valid.
-     * @since 16.03.07
+     * @return true if the sampler object is valid.
+     * @since 16.03.08
      */
     boolean isValid();
 }
