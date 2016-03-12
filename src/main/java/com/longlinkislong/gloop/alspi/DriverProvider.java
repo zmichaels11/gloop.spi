@@ -5,12 +5,22 @@
  */
 package com.longlinkislong.gloop.alspi;
 
+import java.util.Collection;
+
 /**
  *
  * @author zmichaels
  */
 public interface DriverProvider {
+
+    public Collection<? extends String> getDriverDescription();
+
+    public double getSupportRating();
+
+    public boolean isSupported();
+
     Driver getDriverInstance();
+
     default String getDriverName() {
         return getDriverInstance().getClass().getSimpleName();
     }
