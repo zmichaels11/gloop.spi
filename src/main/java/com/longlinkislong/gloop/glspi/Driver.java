@@ -39,6 +39,7 @@ import org.lwjgl.opengl.GL30;
 import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.opengl.GL31.*;
 import static org.lwjgl.opengl.GL33.*;
+import org.slf4j.LoggerFactory;
 
 /**
  * Service provider interface for supplying graphics calls. This is a rough
@@ -58,6 +59,17 @@ import static org.lwjgl.opengl.GL33.*;
  * @since 16.03.07
  */
 public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer, TextureT extends Texture, ShaderT extends Shader, ProgramT extends Program, SamplerT extends Sampler, VertexArrayT extends VertexArray, QueryT extends DrawQuery> {
+
+    /**
+     * Applies performance tweaks to the driver. These may be ignored if the
+     * driver does not support the tweaks.
+     *
+     * @param tweaks tweaks to apply
+     * @since 16.03.24
+     */
+    default void applyTweaks(Tweaks tweaks) {
+        LoggerFactory.getLogger(this.getClass()).warn("This driver does not support tweaks!");
+    }
 
     /**
      * Disables blending.
@@ -354,8 +366,8 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      * @since 16.03.07
      */
     void framebufferBlit(
-            FramebufferT srcFb, int srcX0, int srcY0, int srcX1, int srcY1, 
-            FramebufferT dstFb, int dstX0, int dstY0, int dstX1, int dstY1, 
+            FramebufferT srcFb, int srcX0, int srcY0, int srcX1, int srcY1,
+            FramebufferT dstFb, int dstX0, int dstY0, int dstX1, int dstY1,
             int bitfield, int filter);
 
     /**
@@ -400,8 +412,8 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      * @since 16.03.07
      */
     void framebufferGetPixels(
-            FramebufferT framebuffer, int x, int y, int width, int height, 
-            int format, int type, 
+            FramebufferT framebuffer, int x, int y, int width, int height,
+            int format, int type,
             BufferT dstBuffer);
 
     /**
@@ -418,8 +430,8 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      * @since 16.03.07
      */
     void framebufferGetPixels(
-            FramebufferT framebuffer, int x, int y, int width, int height, 
-            int format, int type, 
+            FramebufferT framebuffer, int x, int y, int width, int height,
+            int format, int type,
             ByteBuffer dstBuffer);
 
     /**
@@ -551,8 +563,8 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      * @since 16.03.07
      */
     void maskApply(
-            boolean red, boolean green, boolean blue, boolean alpha, 
-            boolean depth, 
+            boolean red, boolean green, boolean blue, boolean alpha,
+            boolean depth,
             int stencil);
 
     /**
@@ -568,8 +580,8 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      * @since 16.03.07
      */
     void polygonSetParameters(
-            float pointSize, float lineWidth, 
-            int frontFace, int cullFace, int polygonMode, 
+            float pointSize, float lineWidth,
+            int frontFace, int cullFace, int polygonMode,
             float offsetFactor, float offsetUnits);
 
     /**
@@ -883,8 +895,8 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      * @since 16.03.08
      */
     void textureAllocatePage(
-            TextureT texture, int level, 
-            int xOffset, int yOffset, int zOffset, 
+            TextureT texture, int level,
+            int xOffset, int yOffset, int zOffset,
             int width, int height, int depth);
 
     /**
@@ -915,8 +927,8 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      * 1 in 1D and 2D textures.
      */
     void textureDeallocatePage(
-            TextureT texture, int level, 
-            int xOffset, int yOffset, int zOffset, 
+            TextureT texture, int level,
+            int xOffset, int yOffset, int zOffset,
             int width, int height, int depth);
 
     /**
@@ -952,8 +964,8 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      * @since 16.03.08
      */
     void textureGetData(
-            TextureT texture, int level, 
-            int format, int type, 
+            TextureT texture, int level,
+            int format, int type,
             ByteBuffer out);
 
     /**
@@ -1051,8 +1063,8 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      * @since 16.03.08
      */
     void textureInvalidateRange(
-            TextureT texture, int level, 
-            int xOffset, int yOffset, int zOffset, 
+            TextureT texture, int level,
+            int xOffset, int yOffset, int zOffset,
             int width, int height, int depth);
 
     /**
@@ -1079,9 +1091,9 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      * @since 16.03.08
      */
     void textureSetData(
-            TextureT texture, int level, 
-            int xOffset, int yOffset, int zOffset, 
-            int width, int height, int depth, 
+            TextureT texture, int level,
+            int xOffset, int yOffset, int zOffset,
+            int width, int height, int depth,
             int format, int type, ByteBuffer data);
 
     /**
@@ -1105,8 +1117,8 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
     void textureSetParameter(TextureT texture, int param, float value);
 
     void vertexArrayAttachBuffer(
-            VertexArrayT vao, int index, 
-            BufferT buffer, int size, int type, 
+            VertexArrayT vao, int index,
+            BufferT buffer, int size, int type,
             int stride, long offset, int divisor);
 
     void vertexArrayAttachIndexBuffer(VertexArrayT vao, BufferT buffer);
