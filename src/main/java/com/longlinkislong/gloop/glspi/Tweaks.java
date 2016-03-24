@@ -18,6 +18,7 @@ public final class Tweaks {
     public final boolean ignoreVaoStateReset;
     public final boolean memorizeProgram;
     public final boolean memorizeVao;
+    public final boolean memorizeBuffer;
     public final boolean ignoreBufferStateReset;
     public final boolean ignoreTextureStateReset;
     public final boolean ignoreFramebufferStateReset;
@@ -26,7 +27,7 @@ public final class Tweaks {
     public final Map<String, Boolean> additionalTweaks;
 
     public Tweaks() {
-        this(false, false, false, false, false, false, false, false, Collections.emptyMap());
+        this(false, false, false, false, false, false, false, false, false, Collections.emptyMap());
     }
 
     public Tweaks(
@@ -38,6 +39,7 @@ public final class Tweaks {
             final boolean ignoreFramebufferStateReset,
             final boolean memorizeFramebuffer,
             final boolean ignoreProgramStateReset,
+            final boolean memorizeBuffer,
             final Map<String, Boolean> additionalTweaks) {
 
         this.ignoreVaoStateReset = ignoreVaoStateReset;
@@ -48,6 +50,7 @@ public final class Tweaks {
         this.ignoreFramebufferStateReset = ignoreFramebufferStateReset;
         this.memorizeFramebuffer = memorizeFramebuffer;
         this.ignoreProgramStateReset = ignoreProgramStateReset;
+        this.memorizeBuffer = memorizeBuffer;
         this.additionalTweaks = Collections.unmodifiableMap(new HashMap<>(additionalTweaks));
     }
 
@@ -61,6 +64,7 @@ public final class Tweaks {
                 this.ignoreFramebufferStateReset,
                 this.memorizeFramebuffer,
                 this.ignoreProgramStateReset,
+                this.memorizeBuffer,
                 this.additionalTweaks);
     }
 
@@ -73,6 +77,7 @@ public final class Tweaks {
                 this.ignoreFramebufferStateReset,
                 this.memorizeFramebuffer,
                 this.ignoreProgramStateReset,
+                this.memorizeBuffer,
                 this.additionalTweaks);
     }
 
@@ -86,6 +91,7 @@ public final class Tweaks {
                 this.ignoreFramebufferStateReset,
                 this.memorizeFramebuffer,
                 this.ignoreProgramStateReset,
+                this.memorizeBuffer,
                 this.additionalTweaks);
     }
 
@@ -99,6 +105,7 @@ public final class Tweaks {
                 this.ignoreFramebufferStateReset,
                 this.memorizeFramebuffer,
                 this.ignoreProgramStateReset,
+                this.memorizeBuffer,
                 this.additionalTweaks);
     }
 
@@ -112,6 +119,7 @@ public final class Tweaks {
                 this.ignoreFramebufferStateReset,
                 this.memorizeFramebuffer,
                 this.ignoreProgramStateReset,
+                this.memorizeBuffer,
                 this.additionalTweaks);
     }
 
@@ -125,6 +133,7 @@ public final class Tweaks {
                 ignore,
                 this.memorizeFramebuffer,
                 this.ignoreProgramStateReset,
+                this.memorizeBuffer,
                 this.additionalTweaks);
     }
 
@@ -138,6 +147,7 @@ public final class Tweaks {
                 this.ignoreFramebufferStateReset,
                 this.memorizeFramebuffer,
                 this.ignoreProgramStateReset,
+                this.memorizeBuffer,
                 tweaks);
     }
 
@@ -151,6 +161,7 @@ public final class Tweaks {
                 this.ignoreFramebufferStateReset,
                 memorize,
                 this.ignoreProgramStateReset,
+                this.memorizeBuffer,
                 this.additionalTweaks);
     }
     
@@ -164,10 +175,25 @@ public final class Tweaks {
                 this.ignoreFramebufferStateReset,
                 this.memorizeFramebuffer,
                 ignore,
+                this.memorizeBuffer,
+                this.additionalTweaks);
+    }
+    
+    public Tweaks withMemorizeBuffer(final boolean memorize) {
+        return new Tweaks(
+                this.ignoreVaoStateReset,
+                this.memorizeProgram,
+                this.memorizeVao,
+                this.ignoreBufferStateReset,
+                this.ignoreTextureStateReset,
+                this.ignoreFramebufferStateReset,
+                this.memorizeFramebuffer,
+                this.ignoreProgramStateReset,
+                memorize,
                 this.additionalTweaks);
     }
 
     public Tweaks withAllPerformanceTweaks(final boolean tweaks) {
-        return new Tweaks(tweaks, tweaks, tweaks, tweaks, tweaks, tweaks, tweaks, tweaks, this.additionalTweaks);
+        return new Tweaks(tweaks, tweaks, tweaks, tweaks, tweaks, tweaks, tweaks, tweaks, tweaks, this.additionalTweaks);
     }
 }
