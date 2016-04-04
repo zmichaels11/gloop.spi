@@ -38,8 +38,8 @@ public interface Driver <DeviceT extends Device, BufferT extends Buffer, Listene
     void listenerSetOrientation(ListenerT listener, float atX, float atY, float atZ, float upX, float upY, float upZ);
     void listenerSetGain(ListenerT listener, float gain);
     void sourcePlay(SourceT source);
-    void sourceSetMaxDistance(SourceT source, float maxDistance);
-    void sourceSetReferenceDistance(SourceT source, float refDistance);
+    void sourceSetDistance(SourceT source, float relative, float rolloff, float max);
     void sourceSetBuffer(SourceT source, BufferT buffer);
     void sourceSetLooping(SourceT source, boolean shouldLoop);
+    void distanceModelApply(int model);    
 }

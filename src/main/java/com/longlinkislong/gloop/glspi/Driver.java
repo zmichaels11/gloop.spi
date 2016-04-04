@@ -50,6 +50,7 @@ import org.slf4j.LoggerFactory;
  * @author zmichaels
  * @param <BufferT> the SPI buffer implementation.
  * @param <FramebufferT> the SPI framebuffer implementation.
+ * @param <RenderbufferT> the SPI renderbuffer implementation.
  * @param <TextureT> the SPI texture implementation.
  * @param <ShaderT> the SPI shader implementation.
  * @param <ProgramT> the SPI program implementation.
@@ -58,7 +59,7 @@ import org.slf4j.LoggerFactory;
  * @param <QueryT> the SPI draw query object implementation.
  * @since 16.03.07
  */
-public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer, TextureT extends Texture, ShaderT extends Shader, ProgramT extends Program, SamplerT extends Sampler, VertexArrayT extends VertexArray, QueryT extends DrawQuery> {
+public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer, RenderbufferT extends Renderbuffer, TextureT extends Texture, ShaderT extends Shader, ProgramT extends Program, SamplerT extends Sampler, VertexArrayT extends VertexArray, QueryT extends DrawQuery> {
 
     /**
      * Applies performance tweaks to the driver. These may be ignored if the
@@ -70,6 +71,25 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
     default void applyTweaks(Tweaks tweaks) {
         LoggerFactory.getLogger(this.getClass()).warn("This driver does not support tweaks!");
     }
+
+    /**
+     * Creates a new renderbuffer object.
+     *
+     * @param internalFormat the format for the renderbuffer object.
+     * @param width the width of the renderbuffer.
+     * @param height the height of the renderbuffer.
+     * @return the new renderbuffer object.
+     * @since 16.04.04
+     */
+    RenderbufferT renderbufferCreate(int internalFormat, int width, int height);
+
+    /**
+     * Deletes the renderbuffer object.
+     *
+     * @param renderbuffer the renderbuffer object.
+     * @since 16.04.04
+     */
+    void renderbufferDelete(RenderbufferT renderbuffer);
 
     /**
      * Disables blending.
@@ -307,7 +327,17 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
     void drawQueryEndConditionRender();
 
     /**
-     * Adds a color attachment to the framebuffer.
+     * Adds a renderbuffer attachment to the framebuffer.
+     *
+     * @param framebuffer the framebuffer object.
+     * @param attachmentId the id to attach to.
+     * @param renderbuffer the renderbuffer object.
+     * @since 16.04.04
+     */
+    void framebufferAddRenderbuffer(FramebufferT framebuffer, int attachmentId, RenderbufferT renderbuffer);
+
+    /**
+     * Adds a texture attachment to the framebuffer.
      *
      * @param framebuffer the framebuffer object.
      * @param attachmentId the id to attach to.
@@ -316,26 +346,6 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      * @since 16.03.07
      */
     void framebufferAddAttachment(FramebufferT framebuffer, int attachmentId, TextureT texture, int mipmapLevel);
-
-    /**
-     * Adds a depth attachment to the framebuffer.
-     *
-     * @param framebuffer the framebuffer object.
-     * @param texture the texture object.
-     * @param mipmapLevel the mipmap level to attach.
-     * @since 16.03.07
-     */
-    void framebufferAddDepthAttachment(FramebufferT framebuffer, TextureT texture, int mipmapLevel);
-
-    /**
-     * Adds a depth-stencil attachment to the framebuffer.
-     *
-     * @param framebuffer the framebuffer object.
-     * @param texture the texture object.
-     * @param mipmapLevel the mipmap level to attach.
-     * @since 16.03.07
-     */
-    void framebufferAddDepthStencilAttachment(FramebufferT framebuffer, TextureT texture, int mipmapLevel);
 
     /**
      * Binds the framebuffer object. This will result in writing all draw calls
