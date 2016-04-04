@@ -42,4 +42,5 @@ public interface Driver <DeviceT extends Device, BufferT extends Buffer, Listene
     void sourceSetBuffer(SourceT source, BufferT buffer);
     void sourceSetLooping(SourceT source, boolean shouldLoop);
     void distanceModelApply(int model);    
+    void sourceSetCone(final SourceT source, final float innerAngle, final float outerAngle, final float outerGain);
 }
