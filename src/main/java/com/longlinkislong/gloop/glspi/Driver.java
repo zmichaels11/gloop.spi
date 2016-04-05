@@ -59,8 +59,17 @@ import org.slf4j.LoggerFactory;
  * @param <QueryT> the SPI draw query object implementation.
  * @since 16.03.07
  */
-public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer, RenderbufferT extends Renderbuffer, TextureT extends Texture, ShaderT extends Shader, ProgramT extends Program, SamplerT extends Sampler, VertexArrayT extends VertexArray, QueryT extends DrawQuery> {
-
+public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer, RenderbufferT extends Renderbuffer, TextureT extends Texture, ShaderT extends Shader, ProgramT extends Program, SamplerT extends Sampler, VertexArrayT extends VertexArray, QueryT extends DrawQuery> {    
+    
+    /**
+     * Retrieves the supported shader version. Defaults to 1.00.
+     * @return the shader version.
+     * @since 16.04.05
+     */
+    default int shaderGetVersion() {
+        return 100;
+    }
+    
     /**
      * Applies performance tweaks to the driver. These may be ignored if the
      * driver does not support the tweaks.
