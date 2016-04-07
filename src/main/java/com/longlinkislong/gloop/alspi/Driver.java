@@ -73,7 +73,7 @@ public interface Driver<
         throw new UnsupportedOperationException("Filter objects are not supported!");
     }
     
-    default void deleteFilter(FilterT filter) {
+    default void filterDelete(FilterT filter) {
         throw new UnsupportedOperationException("Filter objects are not supported!");
     }
     
