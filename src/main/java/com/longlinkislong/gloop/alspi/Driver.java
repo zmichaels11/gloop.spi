@@ -21,39 +21,70 @@ import java.nio.ByteBuffer;
 public interface Driver<
         DeviceT extends Device, BufferT extends Buffer, ListenerT extends Listener, SourceT extends Source, AuxEffectSlotT extends AuxiliaryEffectSlot, EffectT extends Effect, FilterT extends Filter> {
 
-    AuxEffectSlotT auxiliaryEffectSlotCreate();
+    default AuxEffectSlotT auxiliaryEffectSlotCreate() {
+        throw new UnsupportedOperationException("Auxiliary Effect Slot objects are not supported by this implementation!");
+    }
 
-    void auxiliaryEffectSlotDelete(AuxEffectSlotT slot);
+    default void auxiliaryEffectSlotDelete(AuxEffectSlotT slot) {
+        throw new UnsupportedOperationException("Auxiliary Effect Slot objects are not supported by this implementation!");
+    }
 
-    void auxiliaryEffectSlotAttachEffect(AuxEffectSlotT slot, EffectT effect);
+    default void auxiliaryEffectSlotAttachEffect(AuxEffectSlotT slot, EffectT effect) {
+        throw new UnsupportedOperationException("Auxiliary Effect Slot objects are not supported by this implementation!");
+    }
 
-    void sourceSendAuxiliaryEffectSlot(SourceT source, AuxEffectSlotT slot, int send);
+    default void sourceSendAuxiliaryEffectSlot(SourceT source, AuxEffectSlotT slot, int send) {
+        throw new UnsupportedOperationException("Auxiliary Effect Slot objects are not supported by this implementation!");
+    }
 
-    void sourceSendAuxiliaryEffectSlot(SourceT source, AuxEffectSlotT slot, int send, FilterT filter);
+    default void sourceSendAuxiliaryEffectSlot(SourceT source, AuxEffectSlotT slot, int send, FilterT filter) {
+        throw new UnsupportedOperationException("Auxiliary Effect Slot objects are not supported by this implementation!");
+    }
     
-    void sourceSendDisable(SourceT source, int send);
+    default void sourceSendDisable(SourceT source, int send) {
+        throw new UnsupportedOperationException("Auxiliary Effect Slot objects are not supported by this implementation!");
+    }
     
-    void sourceAttachDirectFilter(SourceT source, FilterT filter);
+    default void sourceAttachDirectFilter(SourceT source, FilterT filter) {
+        throw new UnsupportedOperationException("Source objects do not support applying Filter objects!");
+    }
     
-    void sourceRemoveDirectFilter(SourceT source);        
+    default void sourceRemoveDirectFilter(SourceT source) {
+        throw new UnsupportedOperationException("Source objects do not support applying Filter objects!");
+    }
 
-    EffectT effectCreate(int effectType);
+    default EffectT effectCreate(int effectType) {
+        throw new UnsupportedOperationException("Effect objects are not supported!");
+    }
 
-    void effectDelete(EffectT effect);
+    default void effectDelete(EffectT effect) {
+        throw new UnsupportedOperationException("Effect objects are not supported!");
+    }
     
-    void effectSetProperty(EffectT effect, int name, int value);
+    default void effectSetProperty(EffectT effect, int name, int value) {
+        throw new UnsupportedOperationException("Effect objects are not supported!");
+    }
     
-    void effectSetProperty(EffectT effect, int name, float value);
+    default void effectSetProperty(EffectT effect, int name, float value) {
+        throw new UnsupportedOperationException("Effect objects are not supported!");
+    }
     
-    FilterT filterCreate(int filterType);
+    default FilterT filterCreate(int filterType) {
+        throw new UnsupportedOperationException("Filter objects are not supported!");
+    }
     
-    void deleteFilter(FilterT filter);
+    default void deleteFilter(FilterT filter) {
+        throw new UnsupportedOperationException("Filter objects are not supported!");
+    }
     
-    void filterSetProperty(FilterT filter, int name, int value);
+    default void filterSetProperty(FilterT filter, int name, int value) {
+        throw new UnsupportedOperationException("Filter objects are not supported!");
+    }
     
-    void filterSetProperty(FilterT filter, int name, float value);
+    default void filterSetProperty(FilterT filter, int name, float value) {
+        throw new UnsupportedOperationException("Filter objects are not supported!");
+    }
     
-
     DeviceT deviceCreate();
 
     void deviceDelete(DeviceT device);
