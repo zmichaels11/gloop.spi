@@ -21,6 +21,10 @@ import java.nio.ByteBuffer;
 public interface Driver<
         DeviceT extends Device, BufferT extends Buffer, ListenerT extends Listener, SourceT extends Source, AuxEffectSlotT extends AuxiliaryEffectSlot, EffectT extends Effect, FilterT extends Filter> {
 
+    default int  sourceGetMaxAuxiliaryEffectSlotSends() {
+        throw new UnsupportedOperationException("Auxiliary Effect Slot objects are not supported by this implementation!");
+    }
+    
     default AuxEffectSlotT auxiliaryEffectSlotCreate() {
         throw new UnsupportedOperationException("Auxiliary Effect Slot objects are not supported by this implementation!");
     }
