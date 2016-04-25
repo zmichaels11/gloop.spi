@@ -45,11 +45,35 @@ public interface SPIObject {
      * Retrieves the elapsed time since the object was last accessed. The
      * intended use of this method is for determining when objects are stale.
      * This method is allowed to return 0 to force objects to remain in memory.
+     * The default implementation of this method returns 0.
      *
      * @return the time in nanoseconds since last accessed.
      * @since 16.04.25
      */
     default long getTimeSinceLastUsed() {
         return 0L;
+    }
+
+    /**
+     * Updates the timestamp used by the Object. The intended use of this method
+     * is to mark when the object was last used. this method is allowed to do
+     * nothing to force objects to remain in memory. The default implementation
+     * of this method does nothing.
+     *
+     * @since 16.04.25
+     */
+    default void updateTime() {
+
+    }
+
+    /**
+     * Resets the timestamp used by the Object. This will mark the object as
+     * never been used. This method is allowed to do nothing to force objects to
+     * remain in memory. The default implementation of this method does nothing.
+     *
+     * @since 16.04.25
+     */
+    default void resetTime() {
+
     }
 }

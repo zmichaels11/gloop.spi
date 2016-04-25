@@ -42,5 +42,5 @@ public interface Buffer extends SPIObject {
      * @since 16.03.07
      */
     @Override
-    boolean isValid();        
+    boolean isValid();         
 }
