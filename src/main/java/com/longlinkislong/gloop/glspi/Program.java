@@ -33,7 +33,7 @@ package com.longlinkislong.gloop.glspi;
  * @author zmichaels
  * @since 16.03.08
  */
-public interface Program {
+public interface Program extends SPIObject {
 
     /**
      * Checks if the program is valid.
@@ -41,5 +41,6 @@ public interface Program {
      * @return true if the program is valid.
      * @since 16.03.08
      */
+    @Override
     boolean isValid();
 }

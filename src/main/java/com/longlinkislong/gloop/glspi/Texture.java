@@ -32,12 +32,13 @@ package com.longlinkislong.gloop.glspi;
  * @author zmichaels
  * @since 16.03.08
  */
-public interface Texture {
+public interface Texture extends SPIObject {
 
     /**
      * Checks if the texture is valid.
      * @return true if the texture is valid.
      * @since 16.03.08
      */
+    @Override
     boolean isValid();
 }

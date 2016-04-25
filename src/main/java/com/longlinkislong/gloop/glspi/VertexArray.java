@@ -32,7 +32,7 @@ package com.longlinkislong.gloop.glspi;
  * @author zmichaels
  * @since 16.03.08
  */
-public interface VertexArray {
+public interface VertexArray extends SPIObject {
 
     /**
      * Checks if the Vertex Array Object is valid.
@@ -40,5 +40,6 @@ public interface VertexArray {
      * @return true if the Vertex Array Object is valid.
      * @since 16.03.08
      */
+    @Override
     boolean isValid();
 }

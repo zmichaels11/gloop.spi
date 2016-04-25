@@ -33,7 +33,7 @@ package com.longlinkislong.gloop.glspi;
  * @author zmichaels
  * @since 16.03.07
  */
-public interface Buffer {
+public interface Buffer extends SPIObject {
 
     /**
      * Checks if the Buffer Object is valid.
@@ -41,5 +41,6 @@ public interface Buffer {
      * @return true if the Buffer Object is valid.
      * @since 16.03.07
      */
-    boolean isValid();
+    @Override
+    boolean isValid();        
 }

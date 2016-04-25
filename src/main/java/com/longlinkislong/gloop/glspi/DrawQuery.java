@@ -35,12 +35,13 @@ package com.longlinkislong.gloop.glspi;
  * @author zmichaels
  * @since 16.03.07
  */
-public interface DrawQuery {
+public interface DrawQuery extends SPIObject{
 
     /**
      * Checks if the DrawQuery is valid.
      * @return true if the DrawQuery is valid.
      * @since 16.03.07
      */
-    boolean isValid();
+    @Override
+    boolean isValid();    
 }

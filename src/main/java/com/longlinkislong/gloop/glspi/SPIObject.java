@@ -26,19 +26,30 @@
 package com.longlinkislong.gloop.glspi;
 
 /**
- * A Service Provider Interface for a Sampler object.
+ * Base object for all glspi objects.
  *
  * @author zmichaels
- * @since 16.03.08
+ * @since 16.04.25
  */
-public interface Sampler extends SPIObject {
+public interface SPIObject {
 
     /**
-     * Checks if the Sampler object is valid.
+     * Checks if the SPIObject is valid.
      *
-     * @return true if the sampler object is valid.
-     * @since 16.03.08
+     * @return true if the SPIObject is value
+     * @since 16.04.25
      */
-    @Override
     boolean isValid();
+
+    /**
+     * Retrieves the elapsed time since the object was last accessed. The
+     * intended use of this method is for determining when objects are stale.
+     * This method is allowed to return 0 to force objects to remain in memory.
+     *
+     * @return the time in nanoseconds since last accessed.
+     * @since 16.04.25
+     */
+    default long getTimeSinceLastUsed() {
+        return 0L;
+    }
 }

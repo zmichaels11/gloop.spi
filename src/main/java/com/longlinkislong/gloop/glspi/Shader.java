@@ -32,7 +32,7 @@ package com.longlinkislong.gloop.glspi;
  * @author zmichaels
  * @since 16.03.08
  */
-public interface Shader {
+public interface Shader extends SPIObject {
 
     /**
      * Checks if the Shader Object is valid.
@@ -40,5 +40,6 @@ public interface Shader {
      * @return true if the Shader Object is valid.
      * @since 16.03.08
      */
+    @Override
     boolean isValid();
 }

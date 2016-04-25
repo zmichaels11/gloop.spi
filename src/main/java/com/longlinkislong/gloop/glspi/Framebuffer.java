@@ -32,12 +32,13 @@ package com.longlinkislong.gloop.glspi;
  * @author zmichaels
  * @since 16.03.08
  */
-public interface Framebuffer {
+public interface Framebuffer extends SPIObject {
 
     /**
      * Checks if the Framebuffer object is valid.
      * @return true if the Framebuffer is valid.
      * @since 16.03.08
      */
+    @Override
     boolean isValid();
 }
