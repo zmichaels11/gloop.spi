@@ -69,10 +69,20 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      * implementation will always return an empty list.
      *
      * @return the list of recorded OpenGL calls (if recording calls is enabled)
-     * @since 16.06.
+     * @since 16.06.13
      */
     default List<String> getCallHistory() {
         return Collections.emptyList();
+    }
+
+    /**
+     * Clears the call history. This will flush any buffers that are recording
+     * OpenGL calls.
+     *
+     * @since 16.06.13
+     */
+    default void clearCallHistory() {
+
     }
 
     /**
