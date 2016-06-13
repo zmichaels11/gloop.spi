@@ -29,6 +29,8 @@ import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.Collections;
+import java.util.List;
 import static org.lwjgl.opengl.EXTTextureCompressionS3TC.*;
 import org.lwjgl.opengl.GL11;
 import static org.lwjgl.opengl.GL11.*;
@@ -59,17 +61,30 @@ import org.slf4j.LoggerFactory;
  * @param <QueryT> the SPI draw query object implementation.
  * @since 16.03.07
  */
-public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer, RenderbufferT extends Renderbuffer, TextureT extends Texture, ShaderT extends Shader, ProgramT extends Program, SamplerT extends Sampler, VertexArrayT extends VertexArray, QueryT extends DrawQuery> {    
-    
+public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer, RenderbufferT extends Renderbuffer, TextureT extends Texture, ShaderT extends Shader, ProgramT extends Program, SamplerT extends Sampler, VertexArrayT extends VertexArray, QueryT extends DrawQuery> {
+
+    /**
+     * Retrieves the call history of all OpenGL calls if recording calls is
+     * enabled. An empty list is returned if no calls were recorded. Default
+     * implementation will always return an empty list.
+     *
+     * @return the list of recorded OpenGL calls (if recording calls is enabled)
+     * @since 16.06.
+     */
+    default List<String> getCallHistory() {
+        return Collections.emptyList();
+    }
+
     /**
      * Retrieves the supported shader version. Defaults to 1.00.
+     *
      * @return the shader version.
      * @since 16.04.05
      */
     default int shaderGetVersion() {
         return 100;
     }
-    
+
     /**
      * Applies performance tweaks to the driver. These may be ignored if the
      * driver does not support the tweaks.
