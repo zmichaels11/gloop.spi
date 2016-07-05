@@ -320,9 +320,9 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      */
     void bufferBindStorage(BufferT buffer, int bindingPoint);
 
-    
     /**
      * Binds a segment of the buffer to the specified binding point. Uses SSBO.
+     *
      * @param buffer the buffer.
      * @param bindingPoint the binding point.
      * @param offset the offset within the buffer for binding.
@@ -754,8 +754,10 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      * @param storageName the name of the shader storage.
      * @param buffer the buffer object to bind as shader storage.
      * @param bindingPoint the binding point of the shader storage.
+     * @deprecated use
      * @since 16.03.07
      */
+    @Deprecated
     void programSetStorage(ProgramT program, String storageName, BufferT buffer, int bindingPoint);
 
     /**
@@ -765,9 +767,53 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      * @param uniformName the uniform name.
      * @param buffer the buffer object to bind as a uniform block.
      * @param bindingPoint the binding point for the uniform storage.
+     * @deprecated use programSetUniformBlockBinding instead.
      * @since 16.03.07
      */
+    @Deprecated
     void programSetUniformBlock(ProgramT program, String uniformName, BufferT buffer, int bindingPoint);
+
+    /**
+     * Sets the location of a uniform block binding for the Program.
+     *
+     * @param program the program.
+     * @param uniformBlockName the uniform block name.
+     * @param binding the binding.
+     * @since 16.07.05
+     */
+    void programSetUniformBlockBinding(ProgramT program, String uniformBlockName, int binding);
+
+    /**
+     * Sets the location of a shader storage block name.
+     *
+     * @param program the program.
+     * @param uniformBlockName the shader storage block name.
+     * @param binding the binding point.
+     * @since 16.07.05
+     */
+    void programSetStorageBlockBinding(ProgramT program, String uniformBlockName, int binding);
+
+    /**
+     * Retrieves the location of the uniform block binding or -1 if no binding
+     * was assigned.
+     *
+     * @param program the program.
+     * @param uniformBlockName the uniform block name.
+     * @return the binding location.
+     * @since 16.07.05
+     */
+    int programGetUniformBlockBinding(ProgramT program, String uniformBlockName);
+
+    /**
+     * Retrieves the location of the shader storage block binding or -1 if no
+     * binding was assigned/found.
+     *
+     * @param program the program.
+     * @param storageBlockName the shader storage block name.
+     * @return the binding location.
+     * @since 16.07.05
+     */
+    int programGetStorageBlockBinding(ProgramT program, String storageBlockName);
 
     /**
      * Sets a uniform vector of 64bit doubles. Support of vector length 1-4 is
