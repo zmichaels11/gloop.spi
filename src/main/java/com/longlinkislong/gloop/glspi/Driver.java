@@ -292,6 +292,42 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
     void bufferUnmapData(BufferT buffer);
 
     /**
+     * Binds the buffer to the specified binding point. Uses UBO.
+     *
+     * @param bindingPoint the binding point.
+     * @since 16.07.05
+     */
+    void bufferBindUniform(int bindingPoint);
+
+    /**
+     * Binds a segment of the buffer to the specified binding point. Uses UBO.
+     *
+     * @param bindingPoint the binding point.
+     * @param offset the offset within the buffer for binding.
+     * @param size the amount of bytes to bind.
+     * @since 16.07.05
+     */
+    void bufferBindUniform(int bindingPoint, long offset, long size);
+
+    /**
+     * Binds the buffer to the specified binding point. Uses SSBO.
+     *
+     * @param bindingPoint the binding point.
+     * @since 16.07.05
+     */
+    void bufferBindStorage(int bindingPoint);
+
+    
+    /**
+     * Binds a segment of the buffer to the specified binding point. Uses SSBO.
+     * @param bindingPoint the binding point.
+     * @param offset the offset within the buffer for binding.
+     * @param size the amount of bytes to bind.
+     * @since 16.07.05
+     */
+    void bufferBindStorage(int bindingPoint, long offset, long size);
+
+    /**
      * Clears the current framebuffer.
      *
      * @param bitfield the drawbuffers to clear.
