@@ -63,6 +63,14 @@ import org.slf4j.LoggerFactory;
  */
 public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer, RenderbufferT extends Renderbuffer, TextureT extends Texture, ShaderT extends Shader, ProgramT extends Program, SamplerT extends Sampler, VertexArrayT extends VertexArray, QueryT extends DrawQuery> {
 
+    default long textureMap(TextureT t) {
+        throw new UnsupportedOperationException("ARB_bindless_texture is not supported!");
+    }
+
+    default void textureUnmap(TextureT t) {
+        throw new UnsupportedOperationException("ARB_bindless_texture is not supported!");
+    }
+
     /**
      * Retrieves the call history of all OpenGL calls if recording calls is
      * enabled. An empty list is returned if no calls were recorded. Default
@@ -310,6 +318,14 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      * @since 16.07.05
      */
     void bufferBindUniform(BufferT buffer, int bindingPoint, long offset, long size);
+
+    /**
+     * Retrieves the maximum size for a uniform block.
+     * @return
+     */
+    default int bufferGetMaxUniformBlockSize() {
+        return 16384;
+    }
 
     /**
      * Binds the buffer to the specified binding point. Uses SSBO.
