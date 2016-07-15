@@ -325,7 +325,7 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      * @param bindingPoint the binding point.
      * @since 16.07.05
      */
-    void bufferBindTransform(BufferT buffer, int bindingPoint);
+    void bufferBindFeedback(BufferT buffer, int bindingPoint);
 
     /**
      * Binds a segment of a buffer to the specified binding point. Uses TFB.
@@ -336,7 +336,7 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      * @param size the amount of bytes to bind.
      * @since 16.07.15
      */
-    void bufferBindTransform(BufferT buffer, int bindingPoint, long offset, long size);
+    void bufferBindFeedback(BufferT buffer, int bindingPoint, long offset, long size);
 
     /**
      * Retrieves the maximum size for a uniform block.
