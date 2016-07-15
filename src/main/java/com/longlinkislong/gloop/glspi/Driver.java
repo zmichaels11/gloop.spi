@@ -320,7 +320,27 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
     void bufferBindUniform(BufferT buffer, int bindingPoint, long offset, long size);
 
     /**
+     * Binds the buffer to the specified binding point. Uses TFB.
+     * @param buffer the buffer.
+     * @param bindingPoint the binding point.
+     * @since 16.07.05
+     */
+    void bufferBindTransform(BufferT buffer, int bindingPoint);
+
+    /**
+     * Binds a segment of a buffer to the specified binding point. Uses TFB.
+     *
+     * @param buffer the buffer.
+     * @param bindingPoint the binding point.
+     * @param offset the offset within the buffer.
+     * @param size the amount of bytes to bind.
+     * @since 16.07.15
+     */
+    void bufferBindTransform(BufferT buffer, int bindingPoint, long offset, long size);
+
+    /**
      * Retrieves the maximum size for a uniform block.
+     *
      * @return
      */
     default int bufferGetMaxUniformBlockSize() {
@@ -752,7 +772,8 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      * @param buffer the buffer to write the feedback data to.
      * @since 16.03.07
      */
-    void programSetFeedbackBuffer(ProgramT program, int varyingLoc, BufferT buffer);
+    @Deprecated
+    void programSetFeedbackBuffer(ProgramT program, int varyingLoc, BufferT buffer);    
 
     /**
      * Sets the attributes to write feedback data to.
@@ -760,7 +781,7 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      * @param program the program object.
      * @param varyings the feedback names.
      * @since 16.03.07
-     */
+     */    
     void programSetFeedbackVaryings(ProgramT program, String[] varyings);
 
     /**
