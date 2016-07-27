@@ -63,13 +63,22 @@ import org.slf4j.LoggerFactory;
  */
 public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer, RenderbufferT extends Renderbuffer, TextureT extends Texture, ShaderT extends Shader, ProgramT extends Program, SamplerT extends Sampler, VertexArrayT extends VertexArray, QueryT extends DrawQuery> {
 
-    default long textureMap(TextureT t) {
-        throw new UnsupportedOperationException("ARB_bindless_texture is not supported!");
-    }
+    /**
+     * Retrieves a pointer for the texture.
+     *
+     * @param t the texture
+     * @return the pointer.
+     * @since 16.07.28
+     */
+    long textureMap(TextureT t);
 
-    default void textureUnmap(TextureT t) {
-        throw new UnsupportedOperationException("ARB_bindless_texture is not supported!");
-    }
+    /**
+     * Frees the pointer used for the texture.
+     *
+     * @param t the texture.
+     * @since 16.07.28
+     */
+    void textureUnmap(TextureT t);
 
     /**
      * Retrieves the call history of all OpenGL calls if recording calls is
@@ -99,9 +108,7 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      * @return the shader version.
      * @since 16.04.05
      */
-    default int shaderGetVersion() {
-        return 100;
-    }
+    int shaderGetVersion();
 
     /**
      * Applies performance tweaks to the driver. These may be ignored if the
@@ -319,8 +326,13 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      */
     void bufferBindUniform(BufferT buffer, int bindingPoint, long offset, long size);
 
+    void bufferBindAtomic(BufferT buffer, int bindingPoint);
+
+    void bufferBindAtomic(BufferT buffer, int bindingPoint, long offset, long size);
+
     /**
      * Binds the buffer to the specified binding point. Uses TFB.
+     *
      * @param buffer the buffer.
      * @param bindingPoint the binding point.
      * @since 16.07.05
@@ -341,11 +353,12 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
     /**
      * Retrieves the maximum size for a uniform block.
      *
-     * @return
+     * @return the maximum size of a uniform block.
+     * @since 16.07.28
      */
-    default int bufferGetMaxUniformBlockSize() {
-        return 16384;
-    }
+    int bufferGetMaxUniformBlockSize();
+
+    int bufferGetMaxUniformBindings();
 
     /**
      * Binds the buffer to the specified binding point. Uses SSBO.
@@ -773,7 +786,7 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      * @since 16.03.07
      */
     @Deprecated
-    void programSetFeedbackBuffer(ProgramT program, int varyingLoc, BufferT buffer);    
+    void programSetFeedbackBuffer(ProgramT program, int varyingLoc, BufferT buffer);
 
     /**
      * Sets the attributes to write feedback data to.
@@ -781,7 +794,7 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      * @param program the program object.
      * @param varyings the feedback names.
      * @since 16.03.07
-     */    
+     */
     void programSetFeedbackVaryings(ProgramT program, String[] varyings);
 
     /**
@@ -1307,9 +1320,10 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
 
     void vertexArrayDrawElementsInstanced(VertexArrayT vao, int drawMode, int count, int type, long offset, int instanceCount);
 
-    void vertexArrayDrawTransformFeedback(VertexArrayT vao, int drawMode, int start, int count);
+    // transform feedback
+    void transformFeedbackBegin(int drawMode);
 
-    void vertexArrayMultiDrawArrays(VertexArrayT vao, int drawMode, IntBuffer first, IntBuffer count);
+    void transformFeedbackEnd();
 
     //viewport
     void viewportApply(int x, int y, int width, int height);
