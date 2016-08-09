@@ -1058,10 +1058,6 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      */
     TextureT textureAllocate(int mipmaps, int internalFormat, int width, int height, int depth, int dataType);
 
-    default TextureT textureAllocate(int mipmaps, int internalFormat, int width, int height, int depth) {
-        return textureAllocate(mipmaps, internalFormat, width, height, depth, 0x1401);
-    }
-
     /**
      * Allocates a segment of a sparse texture. All pages within the specified
      * allocation cube are allocated. The call is allowed to silently ignore
