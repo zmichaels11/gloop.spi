@@ -1052,10 +1052,15 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      * 1.
      * @param depth The number of pixels deep for the texture. Minimum value is
      * 1.
+     * @param dataType the data type to use. Default is GL_UNSIGNED_BYTE
      * @return the Texture Object.
      * @since 16.03.07
      */
-    TextureT textureAllocate(int mipmaps, int internalFormat, int width, int height, int depth);
+    TextureT textureAllocate(int mipmaps, int internalFormat, int width, int height, int depth, int dataType);
+
+    default TextureT textureAllocate(int mipmaps, int internalFormat, int width, int height, int depth) {
+        return textureAllocate(mipmaps, internalFormat, width, height, depth, 0x1401);
+    }
 
     /**
      * Allocates a segment of a sparse texture. All pages within the specified
