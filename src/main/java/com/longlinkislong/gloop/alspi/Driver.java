@@ -142,4 +142,6 @@ public interface Driver<
     void distanceModelApply(int model);
 
     void sourceSetCone(final SourceT source, final float innerAngle, final float outerAngle, final float outerGain);
+    
+    int sourceGetState(SourceT source);
 }
