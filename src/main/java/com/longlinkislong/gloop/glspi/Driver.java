@@ -81,28 +81,6 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
     void textureUnmap(TextureT t);
 
     /**
-     * Retrieves the call history of all OpenGL calls if recording calls is
-     * enabled. An empty list is returned if no calls were recorded. Default
-     * implementation will always return an empty list.
-     *
-     * @return the list of recorded OpenGL calls (if recording calls is enabled)
-     * @since 16.06.13
-     */
-    default List<String> getCallHistory() {
-        return Collections.emptyList();
-    }
-
-    /**
-     * Clears the call history. This will flush any buffers that are recording
-     * OpenGL calls.
-     *
-     * @since 16.06.13
-     */
-    default void clearCallHistory() {
-
-    }
-
-    /**
      * Retrieves the supported shader version. Defaults to 1.00.
      *
      * @return the shader version.
@@ -778,17 +756,6 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
     void programSetAttribLocation(ProgramT program, int index, String name);
 
     /**
-     * Sets a buffer object to capture feedback data.
-     *
-     * @param program the program object to bind the feedback to.
-     * @param varyingLoc the attribute to capture data from.
-     * @param buffer the buffer to write the feedback data to.
-     * @since 16.03.07
-     */
-    @Deprecated
-    void programSetFeedbackBuffer(ProgramT program, int varyingLoc, BufferT buffer);
-
-    /**
      * Sets the attributes to write feedback data to.
      *
      * @param program the program object.
@@ -797,31 +764,6 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      */
     void programSetFeedbackVaryings(ProgramT program, String[] varyings);
 
-    /**
-     * Sets the shader storage in a program.
-     *
-     * @param program the program object.
-     * @param storageName the name of the shader storage.
-     * @param buffer the buffer object to bind as shader storage.
-     * @param bindingPoint the binding point of the shader storage.
-     * @deprecated use
-     * @since 16.03.07
-     */
-    @Deprecated
-    void programSetStorage(ProgramT program, String storageName, BufferT buffer, int bindingPoint);
-
-    /**
-     * Sets a uniform block in a program.
-     *
-     * @param program the program object.
-     * @param uniformName the uniform name.
-     * @param buffer the buffer object to bind as a uniform block.
-     * @param bindingPoint the binding point for the uniform storage.
-     * @deprecated use programSetUniformBlockBinding instead.
-     * @since 16.03.07
-     */
-    @Deprecated
-    void programSetUniformBlock(ProgramT program, String uniformName, BufferT buffer, int bindingPoint);
 
     /**
      * Sets the location of a uniform block binding for the Program.
@@ -1059,28 +1001,6 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
     TextureT textureAllocate(int mipmaps, int internalFormat, int width, int height, int depth, int dataType);
 
     /**
-     * Allocates a segment of a sparse texture. All pages within the specified
-     * allocation cube are allocated. The call is allowed to silently ignore
-     * when the pages are already allocated.
-     *
-     * @param texture the texture object.
-     * @param level the mipmap level.
-     * @param xOffset the offset along the x-axis in pixels.
-     * @param yOffset the offset along the y-axis in pixels.
-     * @param zOffset the offset along the z-axis in pixels.
-     * @param width the width of the allocation cube in pixels.
-     * @param height the height of the allocation cube in pixels. Expected to be
-     * 1 in 1D textures.
-     * @param depth the depth of the allocation cube in pixels. Expected to be 1
-     * in 1D and 2D textures.
-     * @since 16.03.08
-     */
-    void textureAllocatePage(
-            TextureT texture, int level,
-            int xOffset, int yOffset, int zOffset,
-            int width, int height, int depth);
-
-    /**
      * Binds the texture to the specified sampler unit id.
      *
      * @param texture the texture object.
@@ -1088,29 +1008,6 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      * @since 16.03.07
      */
     void textureBind(TextureT texture, int unit);
-
-    /**
-     * Deallocates a segment of a sparse texture. All pages within the specified
-     * allocation cube are deallocated. The call is allowed to silently ignore
-     * when the pages are already allocated.
-     *
-     * @param texture the texture object.
-     * @param level the mipmap level.
-     * @param xOffset the offset along the x-axis in pixels.
-     * @param yOffset the offset along the y-axis in pixels. Expected to be 0 in
-     * 1D textures.
-     * @param zOffset the offset along the z-axis in pixels. Expected to be 0 in
-     * 1D and 2D textures.
-     * @param width the width of the deallocation cube in pixels.
-     * @param height the height of the deallocation cube in pixels. Expected to
-     * be 1 in 1D textures.
-     * @param depth the depth of the deallocation cube in pixels. Expected to be
-     * 1 in 1D and 2D textures.
-     */
-    void textureDeallocatePage(
-            TextureT texture, int level,
-            int xOffset, int yOffset, int zOffset,
-            int width, int height, int depth);
 
     /**
      * Deletes a texture. This should also invalidate the texture handle. This
@@ -1150,6 +1047,23 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
             ByteBuffer out);
 
     /**
+     * Reads data from a texture. The texture must have its memory allocated
+     * prior to calling this method. Calling this method before data is set may
+     * result in reading garbage data.
+     *
+     * @param texture the texture object
+     * @param level the mipmap level.
+     * @param format the pixel format.
+     * @param type the pixel pack type.
+     * @param out the Buffer object to read into
+     * @param offset the offset in bytes to write at.
+     */
+    void textureGetData(
+            TextureT texture, int level,
+            int format, int type,
+            BufferT out, long offset);
+
+    /**
      * Retrieves the maximum level of anisotropic filtering supported for
      * textures.
      *
@@ -1173,36 +1087,6 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      * @since 16.03.08
      */
     int textureGetMaxSize();
-
-    /**
-     * Retrieves the size in pixels for texture page depth. This method is
-     * intended to be used with sparse textures.
-     *
-     * @param texture the texture.
-     * @return the size along the z-axis.
-     * @since 16.03.08
-     */
-    int textureGetPageDepth(TextureT texture);
-
-    /**
-     * Retrieves the size in pixels for texture page height. This method is
-     * intended to be used with sparse textures.
-     *
-     * @param texture the texture.
-     * @return the size along the y-axis.
-     * @since 16.03.08
-     */
-    int textureGetPageHeight(TextureT texture);
-
-    /**
-     * Retrieves the size in pixels for texture page width. This method is
-     * intended to be used with sparse textures.
-     *
-     * @param texture the texture object.
-     * @return the size along the x-axis.
-     * @since 16.03.08
-     */
-    int textureGetPageWidth(TextureT texture);
 
     /**
      * Retrieves the preferred format type for the corresponding internal
@@ -1276,6 +1160,31 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
             int xOffset, int yOffset, int zOffset,
             int width, int height, int depth,
             int format, int type, ByteBuffer data);
+
+    /**
+     * Sets data in a texture. The texture's memory must be allocated prior to
+     * calling this method. 1D textures expect yOffset and zOffset both to be 0
+     * and for height and depth to be 1. 2D textures expect zOffset to be 0 and
+     * depth to be 1.
+     *
+     * @param texture the texture
+     * @param level the mipmap level
+     * @param xOffset xOffset
+     * @param yOffset yOffset. Expected to be 0 if texture is 1D.
+     * @param zOffset zOffset. Expected to be 0 if texture is 1D or 2D
+     * @param width the width
+     * @param height the height. Expected to be 1 if texture is 1D.
+     * @param depth the depth. Expected to be 1 if texture is 1D or 2D.
+     * @param format the pixel format.
+     * @param type the pixel packing type.
+     * @param buffer the buffer holding the data
+     * @param offset the offset to look into the buffer.
+     */
+    void textureSetData(
+            TextureT texture, int level,
+            int xOffset, int yOffset, int zOffset,
+            int width, int height, int depth,
+            int format, int type, BufferT buffer, long offset);
 
     /**
      * Sets a texture parameter.
