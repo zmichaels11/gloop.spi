@@ -29,8 +29,6 @@ import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.Collections;
-import java.util.List;
 import static org.lwjgl.opengl.EXTTextureCompressionS3TC.*;
 import org.lwjgl.opengl.GL11;
 import static org.lwjgl.opengl.GL11.*;
@@ -57,11 +55,10 @@ import org.slf4j.LoggerFactory;
  * @param <ShaderT> the SPI shader implementation.
  * @param <ProgramT> the SPI program implementation.
  * @param <SamplerT> the SPI sampler implementation.
- * @param <VertexArrayT> the SPI vertex array object implementation.
- * @param <QueryT> the SPI draw query object implementation.
+ * @param <VertexArrayT> the SPI vertex array object implementation. 
  * @since 16.03.07
  */
-public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer, RenderbufferT extends Renderbuffer, TextureT extends Texture, ShaderT extends Shader, ProgramT extends Program, SamplerT extends Sampler, VertexArrayT extends VertexArray, QueryT extends DrawQuery> {
+public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer, RenderbufferT extends Renderbuffer, TextureT extends Texture, ShaderT extends Shader, ProgramT extends Program, SamplerT extends Sampler, VertexArrayT extends VertexArray> {
 
     /**
      * Retrieves a pointer for the texture.
@@ -385,47 +382,7 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      * constant)
      * @since 16.03.07
      */
-    void depthTestEnable(int depthTest);
-
-    void drawQueryBeginConditionalRender(QueryT query, int mode);
-
-    /**
-     * Creates a new DrawQuery object.
-     *
-     * @return the DrawQuery object.
-     * @since 16.03.07
-     */
-    QueryT drawQueryCreate();
-
-    /**
-     * Deletes the draw query object. This should invalidate the DrawQuery. This
-     * method is allowed to silently ignore when passed an invalid DrawQuery
-     * object.
-     *
-     * @param query the DrawQuery object.
-     * @since 16.03.07
-     */
-    void drawQueryDelete(QueryT query);
-
-    /**
-     * Disables the conditional.
-     *
-     * @param condition the conditional.
-     * @since 16.03.07
-     */
-    void drawQueryDisable(int condition);
-
-    /**
-     * Enables the conditional requirement for the specified DrawQuery.
-     *
-     * @param condition the conditional requirement for the DrawQuery to
-     * succeed.
-     * @param query the DrawQuery object.
-     * @since 16.03.07
-     */
-    void drawQueryEnable(int condition, QueryT query);
-
-    void drawQueryEndConditionRender();
+    void depthTestEnable(int depthTest);   
 
     /**
      * Adds a renderbuffer attachment to the framebuffer.
