@@ -1013,12 +1013,13 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      * @param format the pixel format.
      * @param type the pixel pack type.
      * @param out the Buffer object to read into
+     * @param size the number of bytes to read into the buffer.
      * @param offset the offset in bytes to write at.
      */
     void textureGetData(
             TextureT texture, int level,
             int format, int type,
-            BufferT out, long offset);
+            BufferT out, long offset, int size);
 
     /**
      * Retrieves the maximum level of anisotropic filtering supported for
