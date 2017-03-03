@@ -55,7 +55,7 @@ import org.slf4j.LoggerFactory;
  * @param <ShaderT> the SPI shader implementation.
  * @param <ProgramT> the SPI program implementation.
  * @param <SamplerT> the SPI sampler implementation.
- * @param <VertexArrayT> the SPI vertex array object implementation. 
+ * @param <VertexArrayT> the SPI vertex array object implementation.
  * @since 16.03.07
  */
 public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer, RenderbufferT extends Renderbuffer, TextureT extends Texture, ShaderT extends Shader, ProgramT extends Program, SamplerT extends Sampler, VertexArrayT extends VertexArray> {
@@ -216,6 +216,12 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      * @since 16.03.07
      */
     void bufferGetData(BufferT buffer, long offset, ByteBuffer out);
+    
+    void bufferGetData(BufferT buffer, long offset, byte[] out);
+    
+    void bufferGetData(BufferT buffer, long offset, int[] out);
+    
+    void bufferGetData(BufferT buffer, long offset, float[] out);
 
     /**
      * Retrieves an integer-like value from the buffer object.
@@ -261,17 +267,34 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
     ByteBuffer bufferMapData(BufferT buffer, long offset, long length, int accessFlags);
 
     /**
-     * Sets the data held by the buffer. This method is allowed to (re)allocate
-     * the backing buffer memory. The buffer should be considered valid after
-     * this call.
+     * Sets the data held by the buffer
      *
      * @param buffer the buffer object.
      * @param data the data to upload
-     * @param usage the usage hints (OpenGL bitfield). The implementation is not
-     * required to follow the hints.
+     * @param offset the offset to write the data to
      * @since 16.03.07
      */
-    void bufferSetData(BufferT buffer, ByteBuffer data, int usage);
+    void bufferSetData(BufferT buffer, int offset, ByteBuffer data);
+
+    void bufferSetData(BufferT buffer, int offset, byte[] data);
+    
+    /**
+     * Sets the data held by the array
+     *
+     * @param buffer the data to upload
+     * @param offset the offset to write the data to
+     * @param data the data to write
+     */
+    void bufferSetData(BufferT buffer, int offset, float[] data);
+
+    /**
+     * Sets the data held by the array
+     *
+     * @param buffer the data to upload
+     * @param offset the offset to write the data to
+     * @param data the data to write
+     */
+    void bufferSetData(BufferT buffer, int offset, int[] data);
 
     /**
      * Unmaps the buffer.
@@ -382,7 +405,7 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      * constant)
      * @since 16.03.07
      */
-    void depthTestEnable(int depthTest);   
+    void depthTestEnable(int depthTest);
 
     /**
      * Adds a renderbuffer attachment to the framebuffer.
@@ -501,6 +524,21 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
             FramebufferT framebuffer, int x, int y, int width, int height,
             int format, int type,
             ByteBuffer dstBuffer);
+
+    void framebufferGetPixels(
+            FramebufferT framebuffer,
+            int x, int y, int width, int height,
+            int[] dst);
+
+    void framebufferGetPixels(
+            FramebufferT framebuffer,
+            int x, int y, int width, int height,
+            float[] dst);
+
+    void framebufferGetPixels(
+            FramebufferT framebuffer,
+            int x, int y, int width, int height,
+            byte[] dst);
 
     /**
      * Checks if the framebuffer is complete.
@@ -720,7 +758,6 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      * @since 16.03.07
      */
     void programSetFeedbackVaryings(ProgramT program, String[] varyings);
-
 
     /**
      * Sets the location of a uniform block binding for the Program.
@@ -1003,6 +1040,21 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
             int format, int type,
             ByteBuffer out);
 
+    void textureGetData(
+            TextureT texture, int level,
+            int format, int type,
+            byte[] out);
+
+    void textureGetData(
+            TextureT texture, int level,
+            int format, int type,
+            int[] out);
+
+    void textureGetData(
+            TextureT texture, int level,
+            int format, int type,
+            float[] out);
+
     /**
      * Reads data from a texture. The texture must have its memory allocated
      * prior to calling this method. Calling this method before data is set may
@@ -1118,6 +1170,24 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
             int xOffset, int yOffset, int zOffset,
             int width, int height, int depth,
             int format, int type, ByteBuffer data);
+
+    void textureSetData(
+            TextureT texture, int level,
+            int xOffset, int yOffset, int zOffset,
+            int width, int height, int depth,
+            int format, int type, byte[] data);
+
+    void textureSetData(
+            TextureT texture, int level,
+            int xOffset, int yOffset, int zOffset,
+            int width, int height, int depth,
+            int format, int type, int[] data);
+
+    void textureSetData(
+            TextureT texture, int level,
+            int xOffset, int yOffset, int zOffset,
+            int width, int height, int depth,
+            int format, int type, float[] data);
 
     /**
      * Sets data in a texture. The texture's memory must be allocated prior to
