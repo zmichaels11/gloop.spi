@@ -262,7 +262,7 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      * @param offset the offset to write the data to
      * @since 16.03.07
      */
-    void bufferSetData(BufferT buffer, int offset, ByteBuffer data);
+    void bufferSetData(BufferT buffer, long offset, ByteBuffer data);
 
     /**
      * Sets the data held by the array
@@ -271,7 +271,7 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      * @param offset the offset to write the data to
      * @param data the data to write
      */
-    void bufferSetData(BufferT buffer, int offset, float[] data);
+    void bufferSetData(BufferT buffer, long offset, float[] data);
 
     /**
      * Sets the data held by the array
@@ -280,7 +280,7 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      * @param offset the offset to write the data to
      * @param data the data to write
      */
-    void bufferSetData(BufferT buffer, int offset, int[] data);
+    void bufferSetData(BufferT buffer, long offset, int[] data);
 
     /**
      * Unmaps the buffer.
