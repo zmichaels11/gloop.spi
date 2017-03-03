@@ -39,6 +39,7 @@ import org.lwjgl.opengl.GL30;
 import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.opengl.GL31.*;
 import static org.lwjgl.opengl.GL33.*;
+import org.lwjgl.system.MemoryUtil;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -215,9 +216,7 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      * available capacity of the ByteBuffer.
      * @since 16.03.07
      */
-    void bufferGetData(BufferT buffer, long offset, ByteBuffer out);
-    
-    void bufferGetData(BufferT buffer, long offset, byte[] out);
+    void bufferGetData(BufferT buffer, long offset, ByteBuffer out);       
     
     void bufferGetData(BufferT buffer, long offset, int[] out);
     
@@ -274,9 +273,7 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      * @param offset the offset to write the data to
      * @since 16.03.07
      */
-    void bufferSetData(BufferT buffer, int offset, ByteBuffer data);
-
-    void bufferSetData(BufferT buffer, int offset, byte[] data);
+    void bufferSetData(BufferT buffer, int offset, ByteBuffer data);    
     
     /**
      * Sets the data held by the array
@@ -534,11 +531,6 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
             FramebufferT framebuffer,
             int x, int y, int width, int height,
             float[] dst);
-
-    void framebufferGetPixels(
-            FramebufferT framebuffer,
-            int x, int y, int width, int height,
-            byte[] dst);
 
     /**
      * Checks if the framebuffer is complete.
@@ -1038,12 +1030,7 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
     void textureGetData(
             TextureT texture, int level,
             int format, int type,
-            ByteBuffer out);
-
-    void textureGetData(
-            TextureT texture, int level,
-            int format, int type,
-            byte[] out);
+            ByteBuffer out);    
 
     void textureGetData(
             TextureT texture, int level,
@@ -1169,13 +1156,7 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
             TextureT texture, int level,
             int xOffset, int yOffset, int zOffset,
             int width, int height, int depth,
-            int format, int type, ByteBuffer data);
-
-    void textureSetData(
-            TextureT texture, int level,
-            int xOffset, int yOffset, int zOffset,
-            int width, int height, int depth,
-            int format, int type, byte[] data);
+            int format, int type, ByteBuffer data);    
 
     void textureSetData(
             TextureT texture, int level,
