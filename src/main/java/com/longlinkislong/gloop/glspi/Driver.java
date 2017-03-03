@@ -514,11 +514,13 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
     void framebufferGetPixels(
             FramebufferT framebuffer,
             int x, int y, int width, int height,
+            int format, int type,
             int[] dst);
 
     void framebufferGetPixels(
             FramebufferT framebuffer,
             int x, int y, int width, int height,
+            int format, int type,
             float[] dst);
 
     /**
@@ -825,6 +827,8 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      * @since 16.03.07
      */
     void programSetUniformMatD(ProgramT program, int uLoc, DoubleBuffer mat);
+    
+    void programSetUniformMatD(ProgramT program, int uLoc, double[] mat);
 
     /**
      * Sets a uniform float matrix. Support of matrices of size 2x2, 3x3, and
@@ -836,6 +840,8 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      * @since 16.03.07
      */
     void programSetUniformMatF(ProgramT program, int uLoc, FloatBuffer mat);
+    
+    void programSetUniformMatF(ProgramT program, int uLoc, float[] mat);
 
     /**
      * The shader program to use.
