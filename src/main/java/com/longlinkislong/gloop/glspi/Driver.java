@@ -29,17 +29,6 @@ import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import static org.lwjgl.opengl.EXTTextureCompressionS3TC.*;
-import org.lwjgl.opengl.GL11;
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL13.*;
-import static org.lwjgl.opengl.GL14.*;
-import static org.lwjgl.opengl.GL21.*;
-import org.lwjgl.opengl.GL30;
-import static org.lwjgl.opengl.GL30.*;
-import static org.lwjgl.opengl.GL31.*;
-import static org.lwjgl.opengl.GL33.*;
-import org.lwjgl.system.MemoryUtil;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -216,10 +205,10 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      * available capacity of the ByteBuffer.
      * @since 16.03.07
      */
-    void bufferGetData(BufferT buffer, long offset, ByteBuffer out);       
-    
+    void bufferGetData(BufferT buffer, long offset, ByteBuffer out);
+
     void bufferGetData(BufferT buffer, long offset, int[] out);
-    
+
     void bufferGetData(BufferT buffer, long offset, float[] out);
 
     /**
@@ -273,8 +262,8 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
      * @param offset the offset to write the data to
      * @since 16.03.07
      */
-    void bufferSetData(BufferT buffer, int offset, ByteBuffer data);    
-    
+    void bufferSetData(BufferT buffer, int offset, ByteBuffer data);
+
     /**
      * Sets the data held by the array
      *
@@ -551,101 +540,101 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
     default int guessFormat(int internalFormat) {
         switch (internalFormat) {
 
-            case GL_COMPRESSED_RGB_S3TC_DXT1_EXT:
-            case GL_RGB:
-            case GL_COMPRESSED_RGB:
-            case GL_COMPRESSED_SRGB:
-            case GL_R3_G3_B2:
-            case GL_RGB4:
-            case GL_RGB5:
-            case GL_RGB8:
-            case GL_RGB8_SNORM:
-            case GL_RGB10:
-            case GL_RGB12:
-            case GL_RGB16:
-            case GL_RGB16_SNORM:
-            case GL_SRGB8:
-            case GL_RGB16F:
-            case GL_RGB32F:
-            case GL_RGB8I:
-            case GL_RGB8UI:
-            case GL_RGB16I:
-            case GL_RGB16UI:
-            case GL_RGB32I:
-            case GL_RGB32UI:
-                return GL11.GL_RGB;
-            case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
-            case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
-            case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
-            case GL_RGBA:
-            case GL_COMPRESSED_RGBA:
-            case GL_COMPRESSED_SRGB_ALPHA:
-            case GL_RGBA2:
-            case GL_RGBA4:
-            case GL_RGBA16_SNORM:
-            case GL_RGB5_A1:
-            case GL_RGBA8:
-            case GL_RGBA8_SNORM:
-            case GL_RGB10_A2:
-            case GL_RGB10_A2UI:
-            case GL_RGBA12:
-            case GL_RGBA16:
-            case GL_SRGB8_ALPHA8:
-            case GL_RGBA16F:
-            case GL_RGBA32F:
-            case GL_R11F_G11F_B10F:
-            case GL_RGBA8I:
-            case GL_RGBA8UI:
-            case GL_RGBA16I:
-            case GL_RGBA16UI:
-            case GL_RGBA32I:
-            case GL_RGBA32UI:
-                return GL11.GL_RGBA;
-            case GL_STENCIL_INDEX:
-                return GL11.GL_STENCIL;
-            case GL_RED:
-            case GL_R8:
-            case GL_R8_SNORM:
-            case GL_R16_SNORM:
-            case GL_COMPRESSED_RED:
-            case GL_R16:
-            case GL_R16F:
-            case GL_R32F:
-            case GL_R8I:
-            case GL_R8UI:
-            case GL_R16I:
-            case GL_R16UI:
-            case GL_R32I:
-            case GL_R32UI:
-                return GL11.GL_RED;
-            case GL_DEPTH_COMPONENT:
-                return GL11.GL_DEPTH_COMPONENT;
-            case GL_DEPTH_STENCIL:
-            case GL_DEPTH24_STENCIL8:
-            case GL_DEPTH32F_STENCIL8:
-                return GL30.GL_DEPTH_STENCIL;
-            case GL_RG:
-            case GL_COMPRESSED_RG:
-            case GL_RG8:
-            case GL_RG8_SNORM:
-            case GL_RG16:
-            case GL_RG16_SNORM:
-            case GL_RG16F:
-            case GL_RG32F:
-            case GL_RG8I:
-            case GL_RG8UI:
-            case GL_RG16I:
-            case GL_RG16UI:
-            case GL_RG32I:
-            case GL_RG32UI:
-                return GL30.GL_RG;
-            case GL_DEPTH_COMPONENT16:
-            case GL_DEPTH_COMPONENT24:
-            case GL_DEPTH_COMPONENT32:
-            case GL_DEPTH_COMPONENT32F:
-                return GL11.GL_DEPTH_COMPONENT;
+            case 0x83F0 /* GL_COMPRESSED_RGB_S3TC_DXT1_EXT*/:
+            case 0x1907 /* GL_RGB */:
+            case 0x84ED /* GL_COMPRESSED_RGB */:
+            case 0x8C48 /* GL_COMPRESSED_SRGB */:
+            case 0x2A10 /* GL_R3_G3_B2 */:
+            case 0x804F /* GL_RGB4 */:
+            case 0x8050 /* GL_RGB5 */:
+            case 0x8051 /* GL_RGB8 */:
+            case 0x8F96 /* GL_RGB8_SNORM */:
+            case 0x8052 /* GL_RGB10 */:
+            case 0x8053 /* GL_RGB12 */:
+            case 0x8054 /* GL_RGB16 */:
+            case 0x8F9A /* GL_RGB16_SNORM */:
+            case 0x8C41 /* GL_SRGB8 */:
+            case 0x881B /* GL_RGB16F */:
+            case 0x8815 /* GL_RGB32F */:
+            case 0x8D8F /* GL_RGB8I */:
+            case 0x8D7D /* GL_RGB8UI */:
+            case 0x8D89 /* GL_RGB16I */:
+            case 0x8D77 /* GL_RGB16UI */:
+            case 0x8D83 /* GL_RGB32I */:
+            case 0x8D71 /* GL_RGB32UI */:
+            case 0x8C3A /* GL_R11F_G11F_B10F */:
+                return 0x1907 /* GL_RGB */;
+            case 0x83F1 /*GL_COMPRESSED_RGBA_S3TC_DXT1_EXT */:
+            case 0x83F2 /* GL_COMPRESSED_RGBA_S3TC_DXT3_EXT */:
+            case 0x83F3 /* GL_COMPRESSED_RGBA_S3TC_DXT5_EXT */:
+            case 0x1908 /* GL_RGBA */:
+            case 0x84EE /* GL_COMPRESSED_RGBA */:
+            case 0x8C49 /* GL_COMPRESSED_SRGB_ALPHA */:
+            case 0x8055 /* GL_RGBA2 */:
+            case 0x8056 /* GL_RGBA4 */:
+            case 0x8F9B /* GL_RGBA16_SNORM */:
+            case 0x8057 /* GL_RGB5_A1 */:
+            case 0x8058 /* GL_RGBA8 */:
+            case 0x8F97 /* GL_RGBA8_SNORM */:
+            case 0x8059 /* GL_RGB10_A2 */:
+            case 0x906F /* GL_RGB10_A2UI */:
+            case 0x805A /* GL_RGBA12 */:
+            case 0x805B /* GL_RGBA16 */:
+            case 0x8C43 /* GL_SRGB8_ALPHA8 */:
+            case 0x881A /* GL_RGBA16F */:
+            case 0x8814 /* GL_RGBA32F */:
+            case 0x8D8E /* GL_RGBA8I */:
+            case 0x8D7C /* GL_RGBA8UI */:
+            case 0x8D88 /* GL_RGBA16I */:
+            case 0x8D76 /* GL_RGBA16UI */:
+            case 0x8D82 /* GL_RGBA32I */:
+            case 0x8D70/* GL_RGBA32UI */:
+                return 0x1908 /* GL_RGBA */;            
+            case 0x1901 /* GL_STENCIL_INDEX */:
+                return 0x1802 /* GL_STENCIL */;
+            case 0x1903 /* GL_RED */:
+            case 0x8229 /* GL_R8 */:
+            case 0x8F94 /* GL_R8_SNORM */:
+            case 0x8F98 /* GL_R16_SNORM */:
+            case 0x8225 /* GL_COMPRESSED_RED */:
+            case 0x822A /* GL_R16 */:
+            case 0x822D /* GL_R16F */:
+            case 0x822E /* GL_R32F */:
+            case 0x8231 /* GL_R8I */:
+            case 0x8232 /* GL_R8UI */:
+            case 0x8233 /* GL_R16I */:
+            case 0x8234 /* GL_R16UI */:
+            case 0x8235 /* GL_R32I */:
+            case 0x8236 /* GL_R32UI */:
+                return 0x1903 /* GL_RED */;
+            case 0x1902 /* GL_DEPTH_COMPONENT */:
+                return 0x1902 /* GL_DEPTH_COMPONENT */;
+            case 0x84F9 /* GL_DEPTH_STENCIL */:
+            case 0x88F0 /* GL_DEPTH24_STENCIL8 */:
+            case 0x8CAD /* GL_DEPTH32F_STENCIL8 */:
+                return 0x84F9 /* GL_DEPTH_STENCIL */;
+            case 0x8227 /* GL_RG */:
+            case 0x8226 /* GL_COMPRESSED_RG */:
+            case 0x822B /* GL_RG8 */:
+            case 0x8F95 /* GL_RG8_SNORM */:
+            case 0x822C /* GL_RG16 */:
+            case 0x8F99 /* GL_RG16_SNORM */:
+            case 0x822F /* GL_RG16F */:
+            case 0x8230 /* GL_RG32F */:
+            case 0x8237 /* GL_RG8I */:
+            case 0x8238 /* GL_RG8UI */:
+            case 0x8239 /* GL_RG16I */:
+            case 0x823A /* GL_RG16UI */:
+            case 0x823B /* GL_RG32I */:
+            case 0x823C /* GL_RG32UI */:
+                return 0x8227 /* GL30.GL_RG */;
+            case 0x81A5 /* GL_DEPTH_COMPONENT16 */:
+            case 0x81A6 /* GL_DEPTH_COMPONENT24 */:
+            case 0x81A7 /* GL_DEPTH_COMPONENT32 */:
+            case 0x8CAC /* GL_DEPTH_COMPONENT32F */:
+                return 0x1902  /* GL_DEPTH_COMPONENT */;
             default:
-                return GL11.GL_RGBA;
+                return 0x1908 /* GL_RGBA */;
         }
     }
 
@@ -1030,7 +1019,7 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
     void textureGetData(
             TextureT texture, int level,
             int format, int type,
-            ByteBuffer out);    
+            ByteBuffer out);
 
     void textureGetData(
             TextureT texture, int level,
@@ -1156,7 +1145,7 @@ public interface Driver<BufferT extends Buffer, FramebufferT extends Framebuffer
             TextureT texture, int level,
             int xOffset, int yOffset, int zOffset,
             int width, int height, int depth,
-            int format, int type, ByteBuffer data);    
+            int format, int type, ByteBuffer data);
 
     void textureSetData(
             TextureT texture, int level,

@@ -104,6 +104,12 @@ public interface Driver<
     void sourceSetDirection(SourceT source, float x, float y, float z);
 
     void bufferSetData(BufferT buffer, int format, ByteBuffer data, int frequency);
+    
+    void bufferSetData(BufferT buffer, int format, short[] data, int frequency);
+    
+    void bufferSetData(BufferT buffer, int format, int[] data, int frequency);
+    
+    void bufferSetData(BufferT buffer, int format, float[] data, int frequency);
 
     void sourceEnqueueBuffer(SourceT source, BufferT buffer);
 
