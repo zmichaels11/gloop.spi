@@ -11,6 +11,6 @@ import java.util.concurrent.ThreadFactory;
  *
  * @author zmichaels
  */
-public interface AbstractThreadFactory extends ThreadFactory {
-    
+public interface ThreadFactoryFactory {
+    ThreadFactory getThreadFactory();
 }
